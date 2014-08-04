@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <fullnamespace>Atos\Atos</fullnamespace>
+    <descriptive locale="en_US">
+        <title>Atos-sips payment module</title>
+    </descriptive>
+    <descriptive locale="fr_FR">
+        <title>module de paiement Atos-sips</title>
+    </descriptive>
+    <version>0.1</version>
+    <author>
+        <name>Manuel Raynaud</name>
+        <email>manu@thelia.net</email>
+    </author>
+    <type>payment</type>
+    <thelia>2.0.0</thelia>
+    <stability>alpha</stability>
+</module>
