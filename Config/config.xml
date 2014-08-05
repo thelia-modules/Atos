@@ -11,6 +11,7 @@
     </loops>
 
     <forms>
+        <form name="atos_configuration" class="Atos\Form\ConfigForm" />
         <!--
         <form name="MyFormName" class="MyModule\Form\MySuperForm" />
         -->

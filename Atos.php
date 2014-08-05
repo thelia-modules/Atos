@@ -12,11 +12,29 @@
 
 namespace Atos;
 
+use Thelia\Model\Config;
+use Thelia\Model\ConfigQuery;
 use Thelia\Model\Order;
 use Thelia\Module\AbstractPaymentModule;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 class Atos extends AbstractPaymentModule
 {
+    const MODULE_DOMAIN = 'atos';
+
+    public function postActivation(ConnectionInterface $con = null)
+    {
+        if (null === ConfigQuery::read('atos_merchantId')) {
+            $merchantConfig = new Config();
+
+            $merchantConfig->setName('atos_merchantId')
+                ->setHidden(true)
+                ->setSecured(true)
+                ->save($con);
+            ;
+        }
+    }
+
     /**
      *
      *  Method used by payment gateway.
