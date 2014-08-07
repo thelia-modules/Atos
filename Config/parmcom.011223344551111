@@ -1,0 +1,16 @@
+###############################################################################
+#
+#	Fichier des parametres du commercant
+#
+#	Remarque :	Ce fichier parametre est sous la responsabilite du
+#				commercant
+#
+###############################################################################
+
+# Logo du commercant (il apparait en entete sur les pages de paiement)
+
+ADVERT!merchant.gif!
+
+# END OF FILE
+
+
