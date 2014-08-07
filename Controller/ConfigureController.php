@@ -54,8 +54,7 @@ class ConfigureController extends BaseAdminController
             if ($this->getRequest()->get('save_mode') == 'stay') {
                 // If we have to stay on the same page, redisplay the configuration page/
                 $route = '/admin/module/Atos';
-            }
-            else {
+            } else {
                 // If we have to close the page, go back to the module back-office page.
                 $route = '/admin/modules';
             }
@@ -84,4 +83,4 @@ class ConfigureController extends BaseAdminController
 
         return $response;
     }
-} 
+}

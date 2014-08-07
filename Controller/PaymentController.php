@@ -15,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Module\BasePaymentModuleController;
 
-
 /**
  * Class PaymentController
  * @package Atos\Controller
@@ -26,8 +25,9 @@ class PaymentController extends BasePaymentModuleController
 
     public function displayLogo($image)
     {
-        if(file_exists(__DIR__ . DS . '..' . DS . 'logo' . DS . $image)) {
+        if (file_exists(__DIR__ . DS . '..' . DS . 'logo' . DS . $image)) {
             $sourceImage = file_get_contents(__DIR__ . DS . '..' . DS . 'logo' . DS . $image);
+
             return Response::create($sourceImage, 200, [
                 'Content-Type' => 'image/gif',
                 'Content-Length' => strlen($sourceImage)

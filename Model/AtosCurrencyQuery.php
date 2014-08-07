@@ -4,7 +4,6 @@ namespace Atos\Model;
 
 use Atos\Model\Base\AtosCurrencyQuery as BaseAtosCurrencyQuery;
 
-
 /**
  * Skeleton subclass for performing query and update operations on the 'atos_currency' table.
  *

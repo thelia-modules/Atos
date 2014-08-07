@@ -31,7 +31,7 @@
     <route id="atos.config" path="/admin/module/atos/configure" methods="post">
         <default key="_controller">Atos\Controller\ConfigureController::configure</default>
     </route>
-    
+
     <route id="atos.logo" path="atos/logo/{image}">
         <default key="_controller">Atos\Controller\PaymentController::displayLogo</default>
     </route>

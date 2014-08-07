@@ -48,16 +48,32 @@ class Atos extends AbstractPaymentModule
         $database->insertSql(null, array(
             __DIR__ . DS . 'Config'.DS.'thelia.sql'
         ));
+
+        $this->replacePath();
+    }
+
+    protected function replacePath()
+    {
+        if (false === is_writable(__DIR__ . '/Config/pathfile')) {
+            throw new \RuntimeException(Translator::getInstance('Config/pathfile must be writable before installing Atos module', [], self::MODULE_DOMAIN));
+        }
+
+        $pathfileContent = file_get_contents(__DIR__ . '/Config/pathfile');
+
+        $pathfileContent = str_replace('__PATH__', __DIR__, $pathfileContent);
+
+        file_put_contents(__DIR__ . '/Config/pathfile', $pathfileContent);
     }
 
     /**
-     * @param string $key atos key parameter
-     * @param string $value parameter value
+     * @param  string $key   atos key parameter
+     * @param  string $value parameter value
      * @return $this
      */
     private function addParam($key, $value)
     {
         $this->parameters = sprintf("%s %s=%s",$this->parameters, $key, $value);
+
         return $this;
     }
 
@@ -70,7 +86,7 @@ class Atos extends AbstractPaymentModule
      *
      * generate a transaction id for atos solution
      *
-     * @param Order $order
+     * @param  Order     $order
      * @return int|mixed
      */
     private function generateTransactionID(Order $order)
@@ -98,7 +114,7 @@ class Atos extends AbstractPaymentModule
      *  In many cases, it's necessary to send a form to the payment gateway. On your response you can return this form already
      *  completed, ready to be sent
      *
-     * @param  \Thelia\Model\Order $order processed order
+     * @param  \Thelia\Model\Order                       $order processed order
      * @return null|\Thelia\Core\HttpFoundation\Response
      */
     public function pay(Order $order)
@@ -163,10 +179,6 @@ class Atos extends AbstractPaymentModule
 
         }
     }
-
-
-
-
 
     /**
      *

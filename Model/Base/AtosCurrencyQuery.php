@@ -48,9 +48,9 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Initializes internal state of \Atos\Model\Base\AtosCurrencyQuery object.
      *
-     * @param     string $dbName The database name
-     * @param     string $modelName The phpName of a model, e.g. 'Book'
-     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string $dbName     The database name
+     * @param string $modelName  The phpName of a model, e.g. 'Book'
+     * @param string $modelAlias The alias for the model in this query, e.g. 'b'
      */
     public function __construct($dbName = 'thelia', $modelName = '\\Atos\\Model\\AtosCurrency', $modelAlias = null)
     {
@@ -60,8 +60,8 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Returns a new ChildAtosCurrencyQuery object.
      *
-     * @param     string $modelAlias The alias of a model in the query
-     * @param     Criteria $criteria Optional Criteria to build the query from
+     * @param string   $modelAlias The alias of a model in the query
+     * @param Criteria $criteria   Optional Criteria to build the query from
      *
      * @return ChildAtosCurrencyQuery
      */
@@ -90,7 +90,7 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * $obj  = $c->findPk(12, $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param mixed               $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildAtosCurrency|array|mixed the result, formatted by the current formatter
@@ -121,10 +121,10 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * Find object by primary key using raw SQL to go fast.
      * Bypass doSelect() and the object formatter by using generated code.
      *
-     * @param     mixed $key Primary key to use for the query
-     * @param     ConnectionInterface $con A connection object
+     * @param mixed               $key Primary key to use for the query
+     * @param ConnectionInterface $con A connection object
      *
-     * @return   ChildAtosCurrency A model object, or null if the key is not found
+     * @return ChildAtosCurrency A model object, or null if the key is not found
      */
     protected function findPkSimple($key, $con)
     {
@@ -151,8 +151,8 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Find object by primary key.
      *
-     * @param     mixed $key Primary key to use for the query
-     * @param     ConnectionInterface $con A connection object
+     * @param mixed               $key Primary key to use for the query
+     * @param ConnectionInterface $con A connection object
      *
      * @return ChildAtosCurrency|array|mixed the result, formatted by the current formatter
      */
@@ -172,8 +172,8 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * <code>
      * $objs = $c->findPks(array(12, 56, 832), $con);
      * </code>
-     * @param     array $keys Primary keys to use for the query
-     * @param     ConnectionInterface $con an optional connection object
+     * @param array               $keys Primary keys to use for the query
+     * @param ConnectionInterface $con  an optional connection object
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
@@ -194,26 +194,24 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Filter the query by primary key
      *
-     * @param     mixed $key Primary key to use for the query
+     * @param mixed $key Primary key to use for the query
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
-
         return $this->addUsingAlias(AtosCurrencyTableMap::CODE, $key, Criteria::EQUAL);
     }
 
     /**
      * Filter the query by a list of primary keys
      *
-     * @param     array $keys The list of primary key to use for the query
+     * @param array $keys The list of primary key to use for the query
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
-
         return $this->addUsingAlias(AtosCurrencyTableMap::CODE, $keys, Criteria::IN);
     }
 
@@ -226,9 +224,9 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * $query->filterByCode('%fooValue%'); // WHERE code LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $code The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string $code       The value to use as filter.
+     *                           Accepts wildcards (* and % trigger a LIKE)
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
@@ -256,11 +254,11 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * $query->filterByAtosCode(array('min' => 12)); // WHERE atos_code > 12
      * </code>
      *
-     * @param     mixed $atosCode The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param mixed  $atosCode   The value to use as filter.
+     *                           Use scalar values for equality.
+     *                           Use array values for in_array() equivalent.
+     *                           Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
@@ -297,11 +295,11 @@ abstract class AtosCurrencyQuery extends ModelCriteria
      * $query->filterByDecimals(array('min' => 12)); // WHERE decimals > 12
      * </code>
      *
-     * @param     mixed $decimals The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param mixed  $decimals   The value to use as filter.
+     *                           Use scalar values for equality.
+     *                           Use array values for in_array() equivalent.
+     *                           Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
@@ -331,7 +329,7 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   ChildAtosCurrency $atosCurrency Object to remove from the list of results
+     * @param ChildAtosCurrency $atosCurrency Object to remove from the list of results
      *
      * @return ChildAtosCurrencyQuery The current query, for fluid interface
      */
@@ -347,8 +345,8 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Deletes all rows from the atos_currency table.
      *
-     * @param ConnectionInterface $con the connection to use
-     * @return int The number of affected rows (if supported by underlying database driver).
+     * @param  ConnectionInterface $con the connection to use
+     * @return int                 The number of affected rows (if supported by underlying database driver).
      */
     public function doDeleteAll(ConnectionInterface $con = null)
     {
@@ -379,13 +377,13 @@ abstract class AtosCurrencyQuery extends ModelCriteria
     /**
      * Performs a DELETE on the database, given a ChildAtosCurrency or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or ChildAtosCurrency object or primary key or array of primary keys
-     *              which is used to create the DELETE statement
-     * @param ConnectionInterface $con the connection to use
-     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-     *                if supported by native driver or if emulated using Propel.
-     * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     * @param  mixed               $values Criteria or ChildAtosCurrency object or primary key or array of primary keys
+     *                                     which is used to create the DELETE statement
+     * @param  ConnectionInterface $con    the connection to use
+     * @return int                 The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                                    if supported by native driver or if emulated using Propel.
+     * @throws PropelException     Any exceptions caught during processing will be
+     *                                    rethrown wrapped into a PropelException.
      */
      public function delete(ConnectionInterface $con = null)
      {
@@ -404,7 +402,6 @@ abstract class AtosCurrencyQuery extends ModelCriteria
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-
 
         AtosCurrencyTableMap::removeInstanceFromPool($criteria);
 
