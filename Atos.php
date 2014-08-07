@@ -18,6 +18,8 @@ use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
+use Thelia\Model\MessageQuery;
+use Thelia\Model\Message;
 use Thelia\Model\Order;
 use Thelia\Module\AbstractPaymentModule;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -26,6 +28,11 @@ use Thelia\Tools\URL;
 class Atos extends AbstractPaymentModule
 {
     const MODULE_DOMAIN = 'atos';
+
+    /**
+     * The confirmation message identifier
+     */
+    const CONFIRMATION_MESSAGE_NAME = 'atos_payment_confirmation';
 
     private $parameters;
 
@@ -48,6 +55,32 @@ class Atos extends AbstractPaymentModule
         $database->insertSql(null, array(
             __DIR__ . DS . 'Config'.DS.'thelia.sql'
         ));
+
+        // Create payment confirmation message from templates, if not already defined
+        $email_templates_dir = __DIR__.DS.'I18n'.DS.'email-templates'.DS;
+
+        if (null === MessageQuery::create()->findOneByName(self::CONFIRMATION_MESSAGE_NAME)) {
+
+            $message = new Message();
+
+            $message
+                ->setName(self::CONFIRMATION_MESSAGE_NAME)
+
+                ->setLocale('en_US')
+                ->setTitle('Atos payment confirmation')
+                ->setSubject('Payment of order {$order_ref}')
+                ->setHtmlMessage(file_get_contents($email_templates_dir.'en.html'))
+                ->setTextMessage(file_get_contents($email_templates_dir.'en.txt'))
+
+                ->setLocale('fr_FR')
+                ->setTitle('Confirmation de paiement par Atos')
+                ->setSubject('Confirmation du paiement de votre commande {$order_ref}')
+                ->setHtmlMessage(file_get_contents($email_templates_dir.'fr.html'))
+                ->setTextMessage(file_get_contents($email_templates_dir.'fr.txt'))
+
+                ->save()
+            ;
+        }
 
         $this->replacePath();
     }
@@ -119,7 +152,7 @@ class Atos extends AbstractPaymentModule
      */
     public function pay(Order $order)
     {
-        $pathBin = __DIR__ . DS . 'bin'. DS .'request';
+        $pathBin = self::getBinDirectory() .'request';
 
         $atosCurrency = AtosCurrencyQuery::create()
             ->findPk($order->getCurrency()->getCode());
@@ -141,7 +174,7 @@ class Atos extends AbstractPaymentModule
 
         $router = $this->getContainer()->get('router.atos');
 
-        $this->addParam('pathfile', __DIR__. DS . 'Config' . DS . 'pathfile')
+        $this->addParam('pathfile', self::getPathfilePath())
             ->addParam('merchant_id', ConfigQuery::read('atos_merchantId'))
             ->addParam('customer_email', $order->getCustomer()->getEmail())
             ->addParam('currency_code', $atosCurrency->getAtosCode())
@@ -192,5 +225,16 @@ class Atos extends AbstractPaymentModule
     public function isValidPayment()
     {
         return true;
+    }
+
+
+    public static function getBinDirectory()
+    {
+        return __DIR__ . DS . 'bin/';
+    }
+
+    public static function getPathfilePath()
+    {
+        return __DIR__. DS . 'Config' . DS . 'pathfile';
     }
 }
