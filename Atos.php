@@ -88,7 +88,7 @@ class Atos extends AbstractPaymentModule
     protected function replacePath()
     {
         if (false === is_writable(__DIR__ . '/Config/pathfile')) {
-            throw new \RuntimeException(Translator::getInstance('Config/pathfile must be writable before installing Atos module', [], self::MODULE_DOMAIN));
+            throw new \RuntimeException(Translator::getInstance()->trans('Config/pathfile must be writable before installing Atos module', [], self::MODULE_DOMAIN));
         }
 
         $pathfileContent = file_get_contents(__DIR__ . '/Config/pathfile');
@@ -192,7 +192,7 @@ class Atos extends AbstractPaymentModule
 
         if ($datas[1] == '' && $datas[2] == '') {
             throw new \RuntimeException(
-                Translator::getInstance()->trans('Request binary not found in "%s"', $pathBin)
+                Translator::getInstance()->trans('Request binary not found in "%path"', ['path' => $pathBin])
             );
         } elseif ($datas[1] != 0) {
             throw new \RuntimeException($datas[2]);
