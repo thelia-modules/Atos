@@ -63,6 +63,8 @@ class PaymentController extends BasePaymentModuleController
         $this->getLog()
             ->addInfo(sprintf('response parameters : %s', print_r($result, true)));
 
+        return Response::create();
+
     }
 
     protected function parseResult($result) {
