@@ -9,6 +9,7 @@ This module offers to your customers the Atos sips payment system.
 * Activate it in your thelia administration panel, Then click on "configure" and enter the ```merchant_id``` provided by your bank.
 * rename files ```Config/certif.fr.xxxxxxxxxxxxxxxx``` to ```Config/certif.fr.<merchant_id>``` and ```parmcom.xxxxxxxxxxxxxxxx``` to ```parmcom.<merchant_id>```.
 For example if your merchant_id is ```011223344551111``` you have rename the file with this merchant_id : ```Config/certif.fr.011223344551111``` and ```parmcom.011223344551111```
+* put the certificate provided by your bank in ```Config/certif.fr.<merchant_id>``` file.
 * Ensure that the binaries file in bin directory can be execute by the server.
 
 ## Usage
