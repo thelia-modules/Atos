@@ -7,12 +7,12 @@
     <descriptive locale="fr_FR">
         <title>module de paiement Atos-sips</title>
     </descriptive>
-    <version>0.1</version>
+    <version>0.9</version>
     <author>
         <name>Manuel Raynaud</name>
         <email>manu@thelia.net</email>
     </author>
     <type>payment</type>
     <thelia>2.0.0</thelia>
-    <stability>alpha</stability>
+    <stability>beta</stability>
 </module>
