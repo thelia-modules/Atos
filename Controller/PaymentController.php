@@ -35,36 +35,41 @@ class PaymentController extends BasePaymentModuleController
 
         $resultRaw = exec(sprintf("%s message=%s pathfile=%s", $binResponse, $data, $pathfile));
 
-        $result = explode('!', $resultRaw);
+        if (! empty($resultRaw)) {
+            $result = explode('!', $resultRaw);
 
-        $result = $this->parseResult($result);
+            $result = $this->parseResult($result);
 
-        if ($result['response_code'] == '00') {
-            $atos = new Atos();
-            $order = OrderQuery::create()
-                ->filterByTransactionRef($result['transaction_id'])
-                ->filterByPaymentModuleId($atos->getModuleModel()->getId())
-                ->findOne();
+            if ($result['response_code'] == '00') {
+                $atos = new Atos();
+                $order = OrderQuery::create()
+                    ->filterByTransactionRef($result['transaction_id'])
+                    ->filterByPaymentModuleId($atos->getModuleModel()->getId())
+                    ->findOne();
 
-            if ($order) {
-                $this->confirmPayment($order->getId());
+                if ($order) {
+                    $this->confirmPayment($order->getId());
+                }
             }
-        }
 
-        if ($result['code'] == '' && $result['error'] == '') {
+            if ($result['code'] == '' && $result['error'] == '') {
+                $this->getLog()
+                    ->addError(sprintf('Response request not found in %s'. $binResponse));
+
+            } elseif ($result['error'] != 0) {
+                $this->getLog()
+                    ->addError(sprintf('error during response process with message : %s', $result['error']));
+            }
+
             $this->getLog()
-                ->addError(sprintf('Response request not found in %s'. $binResponse));
-
-        } elseif ($result['error'] != 0) {
-            $this->getLog()
-                ->addError(sprintf('error during response process with message : %s', $result['error']));
+                ->addInfo(sprintf('response parameters : %s', print_r($result, true)));
         }
-
-        $this->getLog()
-            ->addInfo(sprintf('response parameters : %s', print_r($result, true)));
+        else {
+            $this->getLog()
+                ->addError(sprintf('Got empty response from binary %s, check path and permissions'. $binResponse));
+        }
 
         return Response::create();
-
     }
 
     protected function parseResult($result) {
