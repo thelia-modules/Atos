@@ -193,7 +193,7 @@ class Atos extends AbstractPaymentModule
 
             if ($datas[1] == '' && $datas[2] == '') {
                 throw new \RuntimeException(
-                    Translator::getInstance()->trans('Request binary not found in "%path"', ['path' => $pathBin])
+                    Translator::getInstance()->trans('Request binary not found in "%path"', ['%path' => $pathBin])
                 );
             } elseif ($datas[1] != 0) {
                 throw new \RuntimeException($datas[2]);
@@ -216,7 +216,7 @@ class Atos extends AbstractPaymentModule
             throw new \RuntimeException(
                 Translator::getInstance()->trans(
                     'Empty response recevied from Atos binary "%path". Please check path and permissions.',
-                    ['path' => $pathBin],
+                    ['%path' => $pathBin],
                     self::MODULE_DOMAIN
                 ));
         }
