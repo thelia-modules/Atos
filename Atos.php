@@ -188,28 +188,37 @@ class Atos extends AbstractPaymentModule
 
         $encrypt = exec(sprintf("%s %s", $pathBin, $this->getParameters()));
 
-        $datas = explode('!', $encrypt);
+        if (! empty($encrypt)) {
+            $datas = explode('!', $encrypt);
 
-        if ($datas[1] == '' && $datas[2] == '') {
+            if ($datas[1] == '' && $datas[2] == '') {
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans('Request binary not found in "%path"', ['%path' => $pathBin])
+                );
+            } elseif ($datas[1] != 0) {
+                throw new \RuntimeException($datas[2]);
+            } else {
+
+                $parser = $this->getContainer()->get('thelia.parser');
+
+                $content = $parser->renderString(
+                    file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
+                    [
+                        'site_name' => ConfigQuery::read('store_name'),
+                        'form' => $datas[3]
+                    ]
+                );
+
+                return Response::create($content);
+            }
+        }
+        else {
             throw new \RuntimeException(
-                Translator::getInstance()->trans('Request binary not found in "%path"', ['path' => $pathBin])
-            );
-        } elseif ($datas[1] != 0) {
-            throw new \RuntimeException($datas[2]);
-        } else {
-
-            $parser = $this->getContainer()->get('thelia.parser');
-
-            $content = $parser->renderString(
-                file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
-                [
-                    'site_name' => ConfigQuery::read('store_name'),
-                    'form' => $datas[3]
-                ]
-            );
-
-            return Response::create($content);
-
+                Translator::getInstance()->trans(
+                    'Empty response recevied from Atos binary "%path". Please check path and permissions.',
+                    ['%path' => $pathBin],
+                    self::MODULE_DOMAIN
+                ));
         }
     }
 
