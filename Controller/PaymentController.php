@@ -93,18 +93,19 @@ class PaymentController extends BasePaymentModuleController
             'cvv_response_code' => $result[17],
             'bank_response_code' => $result[18],
             'complementary_code' => $result[19],
-            'return_context' => $result[20],
-            'caddie' => $result[21],
-            'receipt_complement' => $result[22],
-            'merchant_language' => $result[23],
-            'language' => $result[24],
-            'customer_id' => $result[25],
-            'order_id' => $result[26],
-            'customer_email' => $result[27],
-            'customer_ip_address' => $result[28],
-            'capture_day' => $result[29],
-            'capture_mode' => $result[30],
-            'data' => $result[31]
+            'complementary_info' => $result[20],
+            'return_context' => $result[21],
+            'caddie' => $result[22],
+            'receipt_complement' => $result[23],
+            'merchant_language' => $result[24],
+            'language' => $result[25],
+            'customer_id' => $result[26],
+            'order_id' => $result[27],
+            'customer_email' => $result[28],
+            'customer_ip_address' => $result[29],
+            'capture_day' => $result[30],
+            'capture_mode' => $result[31],
+            'data' => $result[32]
         ];
     }
 
