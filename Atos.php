@@ -87,7 +87,13 @@ class Atos extends AbstractPaymentModule
     protected function replacePath()
     {
         if (false === is_writable(__DIR__ . '/Config/pathfile')) {
-            throw new \RuntimeException(Translator::getInstance()->trans('Config/pathfile must be writable before installing Atos module', [], self::MODULE_DOMAIN));
+            throw new \RuntimeException(
+                Translator::getInstance()->trans(
+                    'Config/pathfile must be writable before installing Atos module',
+                    [],
+                    self::MODULE_DOMAIN
+                )
+            );
         }
 
         $pathfileContent = file_get_contents(__DIR__ . '/Config/pathfile');
@@ -143,7 +149,8 @@ class Atos extends AbstractPaymentModule
      *  If this method return a \Thelia\Core\HttpFoundation\Response instance, this response is send to the
      *  browser.
      *
-     *  In many cases, it's necessary to send a form to the payment gateway. On your response you can return this form already
+     *  In many cases, it's necessary to send a form to the payment gateway.
+     *  On your response you can return this form already
      *  completed, ready to be sent
      *
      * @param  \Thelia\Model\Order                       $order processed order
