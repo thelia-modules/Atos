@@ -60,7 +60,6 @@ class Atos extends AbstractPaymentModule
         $email_templates_dir = __DIR__.DS.'I18n'.DS.'email-templates'.DS;
 
         if (null === MessageQuery::create()->findOneByName(self::CONFIRMATION_MESSAGE_NAME)) {
-
             $message = new Message();
 
             $message
@@ -105,7 +104,7 @@ class Atos extends AbstractPaymentModule
      */
     private function addParam($key, $value)
     {
-        $this->parameters = sprintf("%s %s=%s",$this->parameters, $key, $value);
+        $this->parameters = sprintf("%s %s=%s", $this->parameters, $key, $value);
 
         return $this;
     }
@@ -159,7 +158,8 @@ class Atos extends AbstractPaymentModule
 
         if (null == $atosCurrency) {
             throw new \InvalidArgumentException(
-                sprintf("Atos does not supprot this currency : %s",
+                sprintf(
+                    "Atos does not supprot this currency : %s",
                     $order->getCurrency()->getCode()
                 )
             );
@@ -198,9 +198,7 @@ class Atos extends AbstractPaymentModule
             } elseif ($datas[1] != 0) {
                 throw new \RuntimeException($datas[2]);
             } else {
-
                 $parser = $this->getContainer()->get('thelia.parser');
-
                 $content = $parser->renderString(
                     file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
                     [
@@ -208,17 +206,18 @@ class Atos extends AbstractPaymentModule
                         'form' => $datas[3]
                     ]
                 );
-
                 return Response::create($content);
             }
-        }
-        else {
+        } else {
             throw new \RuntimeException(
                 Translator::getInstance()->trans(
                     'Empty response recevied from Atos binary "%path". Please check path and permissions.',
                     ['%path' => $pathBin],
                     self::MODULE_DOMAIN
-                ));
+                )
+            );
+
+            // FIXME : show something to the customer
         }
     }
 
