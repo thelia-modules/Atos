@@ -11,6 +11,7 @@
 /*************************************************************************************/
 
 namespace Atos\Controller;
+
 use Atos\Atos;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Thelia\Core\HttpFoundation\Response;
@@ -54,7 +55,7 @@ class PaymentController extends BasePaymentModuleController
 
             if ($result['code'] == '' && $result['error'] == '') {
                 $this->getLog()
-                    ->addError(sprintf('Response request not found in %s'. $binResponse));
+                    ->addError(sprintf('Response request not found in %s' . $binResponse));
 
             } elseif ($result['error'] != 0) {
                 $this->getLog()
@@ -63,8 +64,7 @@ class PaymentController extends BasePaymentModuleController
 
             $this->getLog()
                 ->addInfo(sprintf('response parameters : %s', print_r($result, true)));
-        }
-        else {
+        } else {
             $this->getLog()
                 ->addError(sprintf('Got empty response from binary %s, check path and permissions'. $binResponse));
         }
@@ -72,7 +72,8 @@ class PaymentController extends BasePaymentModuleController
         return Response::create();
     }
 
-    protected function parseResult($result) {
+    protected function parseResult($result)
+    {
         return [
             'code' => $result[1],
             'error' => $result[2],

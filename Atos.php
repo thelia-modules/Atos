@@ -13,16 +13,16 @@
 namespace Atos;
 
 use Atos\Model\AtosCurrencyQuery;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\MessageQuery;
 use Thelia\Model\Message;
+use Thelia\Model\MessageQuery;
 use Thelia\Model\Order;
 use Thelia\Module\AbstractPaymentModule;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Tools\URL;
 
 class Atos extends AbstractPaymentModule
@@ -60,7 +60,6 @@ class Atos extends AbstractPaymentModule
         $email_templates_dir = __DIR__.DS.'I18n'.DS.'email-templates'.DS;
 
         if (null === MessageQuery::create()->findOneByName(self::CONFIRMATION_MESSAGE_NAME)) {
-
             $message = new Message();
 
             $message
@@ -88,7 +87,13 @@ class Atos extends AbstractPaymentModule
     protected function replacePath()
     {
         if (false === is_writable(__DIR__ . '/Config/pathfile')) {
-            throw new \RuntimeException(Translator::getInstance()->trans('Config/pathfile must be writable before installing Atos module', [], self::MODULE_DOMAIN));
+            throw new \RuntimeException(
+                Translator::getInstance()->trans(
+                    'Config/pathfile must be writable before installing Atos module',
+                    [],
+                    self::MODULE_DOMAIN
+                )
+            );
         }
 
         $pathfileContent = file_get_contents(__DIR__ . '/Config/pathfile');
@@ -105,7 +110,7 @@ class Atos extends AbstractPaymentModule
      */
     private function addParam($key, $value)
     {
-        $this->parameters = sprintf("%s %s=%s",$this->parameters, $key, $value);
+        $this->parameters = sprintf("%s %s=%s", $this->parameters, $key, $value);
 
         return $this;
     }
@@ -144,8 +149,8 @@ class Atos extends AbstractPaymentModule
      *  If this method return a \Thelia\Core\HttpFoundation\Response instance, this response is send to the
      *  browser.
      *
-     *  In many cases, it's necessary to send a form to the payment gateway. On your response you can return this form already
-     *  completed, ready to be sent
+     *  In many cases, it's necessary to send a form to the payment gateway.
+     *  On your response you can return this form already completed, ready to be sent
      *
      * @param  \Thelia\Model\Order                       $order processed order
      * @return null|\Thelia\Core\HttpFoundation\Response
@@ -159,7 +164,8 @@ class Atos extends AbstractPaymentModule
 
         if (null == $atosCurrency) {
             throw new \InvalidArgumentException(
-                sprintf("Atos does not supprot this currency : %s",
+                sprintf(
+                    "Atos does not supprot this currency : %s",
                     $order->getCurrency()->getCode()
                 )
             );
@@ -198,7 +204,6 @@ class Atos extends AbstractPaymentModule
             } elseif ($datas[1] != 0) {
                 throw new \RuntimeException($datas[2]);
             } else {
-
                 $parser = $this->getContainer()->get('thelia.parser');
 
                 $content = $parser->renderString(
@@ -211,14 +216,15 @@ class Atos extends AbstractPaymentModule
 
                 return Response::create($content);
             }
-        }
-        else {
+        } else {
             throw new \RuntimeException(
                 Translator::getInstance()->trans(
                     'Empty response recevied from Atos binary "%path". Please check path and permissions.',
                     ['%path' => $pathBin],
                     self::MODULE_DOMAIN
-                ));
+                )
+            );
+            // FIXME : show something to the customer
         }
     }
 
