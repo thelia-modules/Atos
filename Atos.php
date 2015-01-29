@@ -13,16 +13,16 @@
 namespace Atos;
 
 use Atos\Model\AtosCurrencyQuery;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\MessageQuery;
 use Thelia\Model\Message;
+use Thelia\Model\MessageQuery;
 use Thelia\Model\Order;
 use Thelia\Module\AbstractPaymentModule;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Tools\URL;
 
 class Atos extends AbstractPaymentModule
@@ -150,8 +150,7 @@ class Atos extends AbstractPaymentModule
      *  browser.
      *
      *  In many cases, it's necessary to send a form to the payment gateway.
-     *  On your response you can return this form already
-     *  completed, ready to be sent
+     *  On your response you can return this form already completed, ready to be sent
      *
      * @param  \Thelia\Model\Order                       $order processed order
      * @return null|\Thelia\Core\HttpFoundation\Response
@@ -206,6 +205,7 @@ class Atos extends AbstractPaymentModule
                 throw new \RuntimeException($datas[2]);
             } else {
                 $parser = $this->getContainer()->get('thelia.parser');
+
                 $content = $parser->renderString(
                     file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
                     [
@@ -213,6 +213,7 @@ class Atos extends AbstractPaymentModule
                         'form' => $datas[3]
                     ]
                 );
+
                 return Response::create($content);
             }
         } else {
@@ -223,7 +224,6 @@ class Atos extends AbstractPaymentModule
                     self::MODULE_DOMAIN
                 )
             );
-
             // FIXME : show something to the customer
         }
     }
