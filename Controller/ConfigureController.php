@@ -20,7 +20,6 @@ use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Exception\FileException;
-use Thelia\Exception\InvalidConditionOperatorException;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Model\ConfigQuery;
 use Thelia\Tools\URL;
@@ -32,24 +31,25 @@ use Thelia\Tools\URL;
  */
 class ConfigureController extends BaseAdminController
 {
-    public function displayConfigurationPage() {
-
+    public function displayConfigurationPage()
+    {
         $logFilePath = sprintf(THELIA_ROOT."log".DS."%s.log", Atos::MODULE_DOMAIN);
 
         $traces = @file_get_contents($logFilePath);
 
         if (false === $traces) {
             $traces = $this->getTranslator()->trans(
-                "Le fichier de log '%log' n'existe pas encore.",
+                "The log file '%log' does not exists yet.",
                 [ '%log' => $logFilePath ],
                 Atos::MODULE_DOMAIN
             );
-        }
-        else if (empty($traces)) {
-            $traces = $this->getTranslator()->trans("Le fichier de log est vide.", [], Atos::MODULE_DOMAIN);
+        } elseif (empty($traces)) {
+            $traces = $this->getTranslator()->trans("The log file is currently empty.", [], Atos::MODULE_DOMAIN);
         }
 
-        return $this->render('module-configure', [
+        return $this->render(
+            'module-configure',
+            [
                 'module_code' => 'Atos',
                 'trace_content' => nl2br($traces)
             ]
@@ -105,7 +105,7 @@ class ConfigureController extends BaseAdminController
             // Get the form field values
             $data = $configForm->getData();
 
-            foreach($data as $name => $value) {
+            foreach ($data as $name => $value) {
                 if (is_array($value)) {
                     $value = implode(';', $value);
                 }

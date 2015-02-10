@@ -97,7 +97,7 @@ class Atos extends AbstractPaymentModule
             if (! file_put_contents($this->getConfigDirectory() . 'pathfile', $pathfileContent)) {
                 throw new \RuntimeException(
                     Translator::getInstance()->trans(
-                        'File %file must be writable pathfile installing Atos module, please check Atos/Config directory permissions.',
+                        'File %file must be writable, please check Atos/Config directory permissions.',
                         [ '%file' => 'pathfile' ],
                         self::MODULE_DOMAIN
                     )
