@@ -2,10 +2,10 @@
 <module>
     <fullnamespace>Atos\Atos</fullnamespace>
     <descriptive locale="en_US">
-        <title>Atos-sips payment module</title>
+        <title>Atos-SIPS payment module</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>module de paiement Atos-sips</title>
+        <title>Module de paiement Atos-SIPS</title>
     </descriptive>
     <version>0.9</version>
     <author>

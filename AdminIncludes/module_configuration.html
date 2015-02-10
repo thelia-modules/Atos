@@ -10,14 +10,13 @@
             <div class="row">
                 <div class="col-md-12">
                     {form name="atos_configuration"}
-
                         <form action="{url path="/admin/module/atos/configure"}" method="post">
                             {form_hidden_fields form=$form}
 
                             {include file = "includes/inner-form-toolbar.html"
-                            hide_flags = true
-                            page_url   = "{url path='/admin/module/Atos'}"
-                            close_url  = "{url path='/admin/modules'}"
+                                hide_flags = true
+                                page_url   = "{url path='/admin/module/Atos'}"
+                                close_url  = "{url path='/admin/modules'}"
                             }
 
                             {if $form_error}
@@ -30,24 +29,63 @@
 
                             <div class="row">
                                 <div class="col-md-4">
-                                {form_field form=$form field="merchant_id"}
-                                    <div class="form-group {if $error}has-error{/if}">
-                                        <label for="{$label_attr.for}" class="control-label">
-                                            {$label} {if $required} <span class="required">*</span>{/if}
+                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Atos-SIPS Platform configuration"}</p>
 
-                                            {form_error form=$form field="merchant_id"}
-                                                <br />
-                                                <span class="error">{$message}</span>
-                                            {/form_error}
-                                            <input type="text" {if $required}aria-required="true" required{/if} placeholder="{$label}" id="{$label_attr.for}" name="{$name}" value="{$value}" class="form-control" />
-                                            <span class="help-block">{$label_attr.help}</span>
-                                        </label>
-                                {/form_field}
+                                    {include file="atos/form-field-template.html" field_name="atos_merchantId"}
+                                    {include file="atos/form-field-template.html" field_name="atos_certificate"}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Operation mode"}</p>
+
+                                    {include file="atos/form-field-template.html" field_name="atos_mode"}
+                                    {include file="atos/form-field-template.html" field_name="atos_allowed_ip_list"}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Payment configuration"}</p>
+
+                                    {include file="atos/form-field-template.html" field_name="atos_minimum_amount"}
+                                    {include file="atos/form-field-template.html" field_name="atos_maximum_amount"}
                                 </div>
                             </div>
                         </form>
                     {/form}
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    {intl d='atos.ai' l="Callback URL"}
+                                </label>
+
+                                <div class="well well-sm">{url path='/atos/callback'}</div>
+
+                                <span class="help-block">
+                                    {intl d='atos.ai' l="This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines"}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="cold-xs-12 col-md-8">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        {intl d='paybox.ai' l="Atos-SIPS call log to callback URL"}
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="log-container" style="font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: scroll">
+                                        {$trace_content nofilter}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+</div>

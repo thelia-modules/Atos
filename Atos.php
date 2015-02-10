@@ -17,6 +17,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
+use Thelia\Log\Tlog;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
 use Thelia\Model\Message;
@@ -86,21 +87,31 @@ class Atos extends AbstractPaymentModule
 
     protected function replacePath()
     {
-        if (false === is_writable(__DIR__ . '/Config/pathfile')) {
+        $pathfile = $this->getPathfilePath();
+
+        $pathfileContent = @file_get_contents($pathfile . '.dist');
+
+        if ($pathfileContent) {
+            $pathfileContent = str_replace('__PATH__', __DIR__, $pathfileContent);
+
+            if (! file_put_contents($this->getConfigDirectory() . 'pathfile', $pathfileContent)) {
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans(
+                        'File %file must be writable pathfile installing Atos module, please check Atos/Config directory permissions.',
+                        [ '%file' => 'pathfile' ],
+                        self::MODULE_DOMAIN
+                    )
+                );
+            }
+        } else {
             throw new \RuntimeException(
                 Translator::getInstance()->trans(
-                    'Config/pathfile must be writable before installing Atos module',
-                    [],
+                    'Failed to read the %file file. Please check file and directory permissions.',
+                    [ '%file' => $pathfile . '.dist' ],
                     self::MODULE_DOMAIN
                 )
             );
         }
-
-        $pathfileContent = file_get_contents(__DIR__ . '/Config/pathfile');
-
-        $pathfileContent = str_replace('__PATH__', __DIR__, $pathfileContent);
-
-        file_put_contents(__DIR__ . '/Config/pathfile', $pathfileContent);
     }
 
     /**
@@ -139,7 +150,7 @@ class Atos extends AbstractPaymentModule
 
         ConfigQuery::write('atos_transactionId', $transId, 1, 1);
 
-        return $transId;
+        return sprintf("%06d", $transId);
     }
 
     /**
@@ -229,27 +240,84 @@ class Atos extends AbstractPaymentModule
     }
 
     /**
-     *
-     * This method is call on Payment loop.
-     *
-     * If you return true, the payment method will de display
-     * If you return false, the payment method will not be display
-     *
-     * @return boolean
+     * @return boolean true to allow usage of this payment module, false otherwise.
      */
     public function isValidPayment()
     {
-        return true;
+        $valid = false;
+
+        // Check config files
+        $parmcomFile = self::getConfigDirectory() . 'parmcom.' . ConfigQuery::read('atos_merchantId', '0');
+        $certifFile = self::getConfigDirectory() . 'certif.fr.' . ConfigQuery::read('atos_merchantId', '0');
+
+        if (is_readable($parmcomFile) && is_readable($certifFile)) {
+            $mode = ConfigQuery::read('atos_mode', false);
+
+            // If we're in test mode, do not display Payzen on the front office, except for allowed IP addresses.
+            if ('TEST' == $mode) {
+                $raw_ips = explode("\n", ConfigQuery::read('atos_allowed_ip_list', ''));
+
+                $allowed_client_ips = array();
+
+                foreach ($raw_ips as $ip) {
+                    $allowed_client_ips[] = trim($ip);
+                }
+
+                $client_ip = $this->getRequest()->getClientIp();
+
+                $valid = in_array($client_ip, $allowed_client_ips);
+
+            } else if ('PRODUCTION' == $mode) {
+                $valid = true;
+            }
+
+            if ($valid) {
+                // Check if total order amount is in the module's limits
+                $valid = $this->checkMinMaxAmount();
+            }
+        } else {
+            Tlog::getInstance()->addWarning(
+                Translator::getInstance()->trans(
+                    "Atos payment module is nort properly configured. Please check module configuration in your back-office.",
+                    [],
+                    Atos::MODULE_DOMAIN
+                )
+            );
+        }
+        return $valid;
     }
 
+    /**
+     * Check if total order amount is in the module's limits
+     *
+     * @return bool true if the current order total is within the min and max limits
+     */
+    protected function checkMinMaxAmount()
+    {
+        // Check if total order amount is in the module's limits
+        $order_total = $this->getCurrentOrderTotalAmount();
+
+        $min_amount = ConfigQuery::read('atos_minimum_amount', 0);
+        $max_amount = ConfigQuery::read('atos_maximum_amount', 0);
+
+        return
+            $order_total > 0
+            &&
+            ($min_amount <= 0 || $order_total >= $min_amount) && ($max_amount <= 0 || $order_total <= $max_amount);
+    }
 
     public static function getBinDirectory()
     {
-        return __DIR__ . DS . 'bin/';
+        return __DIR__ . DS . 'bin' . DS;
+    }
+
+    public static function getConfigDirectory()
+    {
+        return __DIR__ . DS . 'Config' . DS;
     }
 
     public static function getPathfilePath()
     {
-        return __DIR__. DS . 'Config' . DS . 'pathfile';
+        return self::getConfigDirectory() . 'pathfile';
     }
 }
