@@ -9,9 +9,9 @@ This module offers to your customers the Atos SIPS payment system, which is wide
 
 Install the Atos module using the Module page of your back office to upload the archive.
 
-You can alos uncompress the archive in the `<thelia root>/local/modules` directory. Be sure that the name of the module's directory is `Atos` (and not `Atos-master`, for exemple).
+You can also extract the archive in the `<thelia root>/local/modules` directory. Be sure that the name of the module's directory is `Atos` (and not `Atos-master`, for example).
 
-Activate the module froml the Modules page of your back-office.
+Activate the module from the Modules page of your back-office.
 
 ### Usage
 
@@ -23,11 +23,11 @@ The module performs several checks when the configuration is saved, especially t
 
 During the test phase, you can define the IP addresses allowed to use the Atos module on the front office, so that your customers will not be able to pay with Atos during this test phase. 
 
-A log of Atos post-payement callbaks is displayed in the configuration page.
+A log of Atos post-payment callbacks is displayed in the configuration page.
 
 ### Payment template
 
-You can customize the payement page ```templates/atos/payment.html``` to provide a better integration in your template, but the payment form data cannot be modified, as it is genetated and signed by the Atos binary.
+You can customize the payment page ```templates/atos/payment.html``` to provide a better integration in your template, but the payment form data cannot be modified, as it is generated and signed by the Atos binary.
 
 ## Instructions en français
 
@@ -45,10 +45,10 @@ Pour utiliser le module Atos, vous devez tout d'abord le configurer. Pour ce fai
 
 Cliquez ensuite sur "Configurer" sur la ligne du module, et renseignez les informations requises. Dans la plupart des cas, l'ID Marchand vous a été communiqué par votre banque par e-mail, et vous devez recevoir les instructions qui vous permettront de télécharger le certificat.
 
-Le module réalise plusieurs vérifications de votre configuration, et vous signalera les problèmes éventuellement rencontrés. Il contrôle notamment que les éxécutables Atos possèdent bien les permissions d'exécution.
+Le module réalise plusieurs vérifications de votre configuration, et vous signalera les problèmes éventuellement rencontrés. Il contrôle notamment que les exécutables Atos possèdent bien les permissions d'exécution.
 
-Lors de la phase de test, vous pouvez définir les adresses IP qui seront autorisées à utiliser le module en front-office, afin de ne pas laisser vos clients payer leur commandes avec Aros pendant cette phase.
+Lors de la phase de test, vous pouvez définir les adresses IP qui seront autorisées à utiliser le module en front-office, afin de ne pas laisser vos clients payer leur commandes avec Atos pendant cette phase.
 
 ## Template de paiement
 
-Vous pouvez adapter la page de paiement qui se trouve dans ```templates/atos/payment.html```, et l'adapter à votre template, mais la form de paiement en elle-meêm ne peit pas être mosifiée, elle est générée et signée par le binaire Atos, et ne doit pas être modifiée.
+Vous pouvez adapter la page de paiement qui se trouve dans ```templates/atos/payment.html```, et l'adapter à votre template, mais la form de paiement en elle-même ne peut pas être modifiée, elle est générée et signée par le binaire Atos, et ne doit pas être modifiée.
