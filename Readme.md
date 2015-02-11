@@ -1,57 +1,54 @@
-Atos
-----
+# Atos-SIPS Payment Module
+------------------------
 
-##en_EN
+## English instructions
 
-This module offers to your customers the Atos sips payment system.
+This module offers to your customers the Atos SIPS payment system, which is widely used by the french banks under different names: Mercanet, E-Transactions, Citelis, and much more.
+
+### Installation
+
+Install the Atos module using the Module page of your back office to upload the archive.
+
+You can alos uncompress the archive in the `<thelia root>/local/modules` directory. Be sure that the name of the module's directory is `Atos` (and not `Atos-master`, for exemple).
+
+Activate the module froml the Modules page of your back-office.
+
+### Usage
+
+You have to configure the Atos module before starting to use it. To do so, go to the "Modules" tab of your Thelia back-office, and activate the Atos module.
+
+Then click the "Configure" button, and enter the required information. In most case, you'll receive your merchant ID by e-mail, and you'll receive instructions to download your certificate.
+
+The module performs several checks when the configuration is saved, especially the execution permissions on the Atos binaries.
+
+During the test phase, you can define the IP addresses allowed to use the Atos module on the front office, so that your customers will not be able to pay with Atos during this test phase. 
+
+A log of Atos post-payement callbaks is displayed in the configuration page.
+
+### Payment template
+
+You can customize the payement page ```templates/atos/payment.html``` to provide a better integration in your template, but the payment form data cannot be modified, as it is genetated and signed by the Atos binary.
+
+## Instructions en français
+
+Ce module permet à vos clients de payer leurs commande par carte bancaire via la plate-forme Atos SIPS, utilisée par de nombreuses banques françaises sous diverses dénominations commerciales: Mercanet, Citelis, E-Transactions, et bien d'autres.
 
 ## Installation
 
-* Copy the module into ```<thelia_root>/local/modules/``` directory and be sure that the name of the module is Atos.
-* Activate it in your thelia administration panel, Then click on "configure" and enter the ```merchant_id``` provided by your bank.
-* rename files ```Config/certif.fr.xxxxxxxxxxxxxxxx``` to ```Config/certif.fr.<merchant_id>``` and ```parmcom.xxxxxxxxxxxxxxxx``` to ```parmcom.<merchant_id>```.
-For example if your merchant_id is ```011223344551111``` you have rename the file with this merchant_id : ```Config/certif.fr.011223344551111``` and ```parmcom.011223344551111```
-* put the certificate provided by your bank in ```Config/certif.fr.<merchant_id>``` file.
-* Ensure that the binaries file in bin directory can be executed by the server.
+Installez ce module directement depuis la page Modules de votre back-office, en envoyant le fichier zip du module.
 
-## Usage
+Vous pouvez aussi décompresser le module, et le placer manuellement dans le dossier ```<thelia_root>/local/modules```. Assurez-vous que le nom du dossier est bien ```Atos```, et pas ```Atos-master```
 
-After installing the module you have nothing to do, just test it before switching your contract to production mode.
+## Utilisation
 
-## Payment template
+Pour utiliser le module Atos, vous devez tout d'abord le configurer. Pour ce faire, rendez-vous dans votre back-office, onglet Modules, et activez le module Atos.
 
-Atos binary generate all the form for you so it's not possible to customize it simply. By the way you can customize the template present in ```templates/atos/payment.html``` but you can't customize the form, you can't inherit
-from your default layout.
+Cliquez ensuite sur "Configurer" sur la ligne du module, et renseignez les informations requises. Dans la plupart des cas, l'ID Marchand vous a été communiqué par votre banque par e-mail, et vous devez recevoir les instructions qui vous permettront de télécharger le certificat.
 
+Le module réalise plusieurs vérifications de votre configuration, et vous signalera les problèmes éventuellement rencontrés. Il contrôle notamment que les éxécutables Atos possèdent bien les permissions d'exécution.
 
-##fr_FR
-
-Module de paiement sécurisé par carte bancaire.
-
-## Installation
-
-Copiez le module dans le répertoire <thelia_root>/local/modules/.
-Vérifiez bien que le nom du module soit Atos.
-Activez le module dans l'interface d'administration. 
-Ensuite cliquez sur "configurez" et entrez l'id marchand envoyé par votre banque. 
-Renommez les fichiers :
-*- Config/certif.fr.xxxxxxxxxxxxxxxx  par Config/certif.fr.<merchant_id> 
-*- parmcom.xxxxxxxxxxxxxxxx par parmcom.<merchant_id>.
-Par exemple, si votre 'merchant_id' is 011223344551111 vous devez renommez les fichiers avec ce 'merchant_id' : Config/certif.fr.011223344551111 et parmcom.011223344551111
-
-Déposez le certificat fourni par votre banque dans le dossier Config/certif.fr.<merchant_id>.
-Vérifiez bien que les binaires sont exécutables sur votre serveur.
-
-## Utilisation 
-
-Une fois le module installé, vous n'avez plus rien à faire. 
-Simplement testez le module avant de passer votre contrat en mode "production". 
-
+Lors de la phase de test, vous pouvez définir les adresses IP qui seront autorisées à utiliser le module en front-office, afin de ne pas laisser vos clients payer leur commandes avec Aros pendant cette phase.
 
 ## Template de paiement
 
-Les binaires Atos génèrent tous les formulaires. Ces formulaires ne peuvent donc pas être personnalisés.
-
-Cependant vous pouvez personnaliser le template present dans ```templates/atos/payment.html```.
-
- 
+Vous pouvez adapter la page de paiement qui se trouve dans ```templates/atos/payment.html```, et l'adapter à votre template, mais la form de paiement en elle-meêm ne peit pas être mosifiée, elle est générée et signée par le binaire Atos, et ne doit pas être modifiée.
