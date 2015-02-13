@@ -8,8 +8,7 @@
 ###############################################################################
 
 # Logo du commercant (il apparait en entete sur les pages de paiement)
-
-ADVERT!merchant.gif!
+#ADVERT!merchant.gif!
 
 # END OF FILE
 

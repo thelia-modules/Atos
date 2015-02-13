@@ -21,53 +21,113 @@ use Thelia\Module\BasePaymentModuleController;
 /**
  * Class PaymentController
  * @package Atos\Controller
- * @author manuel raynaud <mraynaud@openstudio.fr>
+ * @author manuel raynaud <mraynaud@openstudio.fr>, Franck Allimant <franck@cqfdev.fr>
  */
 class PaymentController extends BasePaymentModuleController
 {
 
     public function processAtosRequest()
     {
+        $this->getLog()->addInfo(
+            $this->getTranslator()->trans(
+                "Atos-SIPS platform request received.",
+                [],
+                Atos::MODULE_DOMAIN
+            )
+        );
+
         $binResponse = Atos::getBinDirectory() .DS . 'response';
 
-        $data = escapeshellcmd($_POST['DATA']);
+        if (! empty($_POST['DATA'])) {
+            $data = escapeshellcmd($_POST['DATA']);
 
-        $pathfile = Atos::getPathfilePath();
+            $pathfile = Atos::getPathfilePath();
 
-        $resultRaw = exec(sprintf("%s message=%s pathfile=%s", $binResponse, $data, $pathfile));
+            $resultRaw = exec(sprintf("%s message=%s pathfile=%s", $binResponse, $data, $pathfile));
 
-        if (! empty($resultRaw)) {
-            $result = explode('!', $resultRaw);
+            if (!empty($resultRaw)) {
+                $result = explode('!', $resultRaw);
 
-            $result = $this->parseResult($result);
+                $result = $this->parseResult($result);
 
-            if ($result['response_code'] == '00') {
-                $atos = new Atos();
-                $order = OrderQuery::create()
-                    ->filterByTransactionRef($result['transaction_id'])
-                    ->filterByPaymentModuleId($atos->getModuleModel()->getId())
-                    ->findOne();
+                $this->getLog()->addInfo(
+                    $this->getTranslator()->trans(
+                        'Response parameters : %resp',
+                        ['%resp' => print_r($result, true)],
+                        Atos::MODULE_DOMAIN
+                    )
+                );
 
-                if ($order) {
-                    $this->confirmPayment($order->getId());
+                if ($result['code'] == '' && $result['error'] == '') {
+                    $this->getLog()->addError(
+                        $this->getTranslator()->trans(
+                            'Response request not found in %response',
+                            ['%response' => $binResponse],
+                            Atos::MODULE_DOMAIN
+                        )
+                    );
+                } elseif (intval($result['code']) != 0) {
+                    $this->getLog()->addError(
+                        $this->getTranslator()->trans(
+                            'Error %code while processing response, with message %message',
+                            ['%code' => intval($result['code']), '%message' => $result['error']],
+                            Atos::MODULE_DOMAIN
+                        )
+                    );
+                } else {
+                    $atos = new Atos();
+
+                    $order = OrderQuery::create()
+                        ->filterByTransactionRef($result['transaction_id'])
+                        ->filterByPaymentModuleId($atos->getModuleModel()->getId())
+                        ->findOne();
+
+                    if ($order) {
+                        $this->confirmPayment($order->getId());
+
+                        $this->getLog()->addInfo(
+                            $this->getTranslator()->trans(
+                                "Order ID %id is confirmed.",
+                                ['%id' => $order->getId()],
+                                Atos::MODULE_DOMAIN
+                            )
+                        );
+                    } else {
+                        $this->getLog()->addError(
+                            $this->getTranslator()->trans(
+                                'Cannot find an order for transaction ID "%trans"',
+                                ['%trans' => $result['transaction_id']],
+                                Atos::MODULE_DOMAIN
+                            )
+                        );
+                    }
                 }
+            } else {
+                $this->getLog()->addError(
+                    $this->getTranslator()->trans(
+                        'Got empty response from executable %binary, check path and permissions',
+                        ['%binary' => $binResponse],
+                        Atos::MODULE_DOMAIN
+                    )
+                );
             }
-
-            if ($result['code'] == '' && $result['error'] == '') {
-                $this->getLog()
-                    ->addError(sprintf('Response request not found in %s' . $binResponse));
-
-            } elseif ($result['error'] != 0) {
-                $this->getLog()
-                    ->addError(sprintf('error during response process with message : %s', $result['error']));
-            }
-
-            $this->getLog()
-                ->addInfo(sprintf('response parameters : %s', print_r($result, true)));
         } else {
-            $this->getLog()
-                ->addError(sprintf('Got empty response from binary %s, check path and permissions'. $binResponse));
+            $this->getLog()->addError(
+                $this->getTranslator()->trans(
+                    'Request does not contains any data',
+                    [],
+                    Atos::MODULE_DOMAIN
+                )
+            );
         }
+
+        $this->getLog()->info(
+            $this->getTranslator()->trans(
+                "Atos platform request processing terminated.",
+                [],
+                Atos::MODULE_DOMAIN
+            )
+        );
 
         return Response::create();
     }
