@@ -196,6 +196,7 @@ class Atos extends AbstractPaymentModule
             ->addParam('customer_email', $order->getCustomer()->getEmail())
             ->addParam('currency_code', $atosCurrency->getAtosCode())
             ->addParam('amount', $amount)
+            ->addParam('language', $order->getLang()->getCode())
             ->addParam('transaction_id', $transactionId)
             ->addParam('order_id', $order->getId())
             ->addParam('automatic_response_url', URL::getInstance()->absoluteUrl($router->generate('atos.payment.confirmation')))
