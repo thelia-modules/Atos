@@ -7,11 +7,19 @@ This module offers to your customers the Atos SIPS payment system, which is wide
 
 ### Installation
 
+#### Manually
+
 Install the Atos module using the Module page of your back office to upload the archive.
 
 You can also extract the archive in the `<thelia root>/local/modules` directory. Be sure that the name of the module's directory is `Atos` (and not `Atos-master`, for example).
 
 Activate the module from the Modules page of your back-office.
+
+#### composer
+
+```
+$ composer require thelia/atos-module:~1.0
+```
 
 ### Usage
 
@@ -35,9 +43,18 @@ Ce module permet à vos clients de payer leurs commande par carte bancaire via l
 
 ## Installation
 
+### Manuellement
+
 Installez ce module directement depuis la page Modules de votre back-office, en envoyant le fichier zip du module.
 
 Vous pouvez aussi décompresser le module, et le placer manuellement dans le dossier ```<thelia_root>/local/modules```. Assurez-vous que le nom du dossier est bien ```Atos```, et pas ```Atos-master```
+
+### composer
+
+```
+$ composer require thelia/atos-module:~1.0
+```
+
 
 ## Utilisation
 
