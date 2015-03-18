@@ -119,14 +119,14 @@ class Atos extends AbstractPaymentModule
      * @param  string $value parameter value
      * @return $this
      */
-    private function addParam($key, $value)
+    protected function addParam($key, $value)
     {
         $this->parameters = sprintf("%s %s=%s", $this->parameters, $key, $value);
 
         return $this;
     }
 
-    private function getParameters()
+    protected function getParameters()
     {
         return trim($this->parameters);
     }
