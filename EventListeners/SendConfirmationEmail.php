@@ -47,7 +47,7 @@ class SendConfirmationEmail implements EventSubscriberInterface
     {
         $atos = new Atos();
         $order = $event->getOrder();
-        if ($order->isPaid() && $atos->isPaymentModuleFor($order)) {
+        if ($order->isPaid(true) && $atos->isPaymentModuleFor($order)) {
             $this->mailer->sendEmailToCustomer(
                 Atos::CONFIRMATION_MESSAGE_NAME,
                 $order->getCustomer(),
