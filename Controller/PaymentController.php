@@ -74,7 +74,7 @@ class PaymentController extends BasePaymentModuleController
                             Atos::MODULE_DOMAIN
                         )
                     );
-                } else {
+                } elseif ($result['response_code'] == '00') {
                     $atos = new Atos();
 
                     $order = OrderQuery::create()
@@ -101,6 +101,14 @@ class PaymentController extends BasePaymentModuleController
                             )
                         );
                     }
+                } else {
+                    $this->getLog()->addError(
+                        $this->getTranslator()->trans(
+                            'Cannot validate order. Response code is %resp',
+                            ['%resp' => $result['response_code']],
+                            Atos::MODULE_DOMAIN
+                        )
+                    );
                 }
             } else {
                 $this->getLog()->addError(
