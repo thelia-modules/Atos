@@ -7,6 +7,7 @@ return array(
     'Atos platform request processing terminated.' => 'Traitemenr de la requête ATOS terminé.',
     'Atos-SIPS platform request received.' => 'Réception d\'une requête ATOS',
     'Cannot find an order for transaction ID "%trans"' => 'Aucune commande ne correspond à l\'ID de transaction "%trans"',
+    'Cannot validate order. Response code is %resp' => 'La commande ne peut être validée. Le code de réponse est %resp',
     'Empty response recevied from Atos binary "%path". Please check path and permissions.' => 'Le binaire Atos %path a retourné une réponse vide. Vérifiez que ce fichier est exécutable.',
     'Error %code while processing response, with message %message' => 'Erreur %code lors du traitement de la réponse, avec le message %message',
     'Failed to read the %file file. Please check file and directory permissions.' => 'Impossible de lire le fichier %file. Vérifier que le fichier existe et est est accessible en lecture.',

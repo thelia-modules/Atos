@@ -7,6 +7,7 @@ return array(
     'Atos platform request processing terminated.' => 'Atos platform request processing terminated.',
     'Atos-SIPS platform request received.' => 'Atos-SIPS platform request received.',
     'Cannot find an order for transaction ID "%trans"' => 'Cannot find an order for transaction ID "%trans"',
+    'Cannot validate order. Response code is %resp' => 'Cannot validate order. Response code is %resp',
     'Empty response recevied from Atos binary "%path". Please check path and permissions.' => 'Empty response recevied from Atos binary "%path". Please check path and permissions.',
     'Error %code while processing response, with message %message' => 'Error %code while processing response, with message %message',
     'Failed to read the %file file. Please check file and directory permissions.' => 'Failed to read the %file file. Please check file and directory permissions.',
