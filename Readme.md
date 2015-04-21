@@ -1,6 +1,8 @@
 # Atos-SIPS Payment Module
 ------------------------
 
+test
+
 ## English instructions
 
 This module offers to your customers the Atos SIPS payment system, which is widely used by the french banks under different names: Mercanet, E-Transactions, Citelis, and much more.
@@ -29,7 +31,7 @@ Then click the "Configure" button, and enter the required information. In most c
 
 The module performs several checks when the configuration is saved, especially the execution permissions on the Atos binaries.
 
-During the test phase, you can define the IP addresses allowed to use the Atos module on the front office, so that your customers will not be able to pay with Atos during this test phase. 
+During the test phase, you can define the IP addresses allowed to use the Atos module on the front office, so that your customers will not be able to pay with Atos during this test phase.
 
 A log of Atos post-payment callbacks is displayed in the configuration page.
 
