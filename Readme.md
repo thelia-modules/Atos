@@ -3,6 +3,10 @@
 
 test
 
+<script>
+    alert("foo");
+</script>
+
 ## English instructions
 
 This module offers to your customers the Atos SIPS payment system, which is widely used by the french banks under different names: Mercanet, E-Transactions, Citelis, and much more.
