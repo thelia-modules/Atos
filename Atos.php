@@ -218,6 +218,10 @@ class Atos extends AbstractPaymentModule
             } else {
                 $parser = $this->getContainer()->get('thelia.parser');
 
+                $parser->setTemplateDefinition(
+                    $parser->getTemplateHelper()->getActiveFrontTemplate()
+                );
+
                 $content = $parser->renderString(
                     file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
                     [
@@ -268,7 +272,7 @@ class Atos extends AbstractPaymentModule
 
                 $valid = in_array($client_ip, $allowed_client_ips);
 
-            } else if ('PRODUCTION' == $mode) {
+            } elseif ('PRODUCTION' == $mode) {
                 $valid = true;
             }
 
