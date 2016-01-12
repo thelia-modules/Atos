@@ -48,6 +48,17 @@ class Atos extends AbstractPaymentModule
             self::setConfigValue('send_payment_confirmation_message', 1);
         }
 
+        // Try to chmod binaries if they're not executables
+        $binFile = self::getBinDirectory() . 'request';
+        if (! is_executable($binFile)) {
+            @chmod($binFile, 0755);
+        }
+
+        $binFile = self::getBinDirectory() . 'response';
+        if (! is_executable($binFile)) {
+            @chmod($binFile, 0755);
+        }
+
         $database = new Database($con);
 
         $database->insertSql(null, array(

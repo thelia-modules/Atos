@@ -13,14 +13,15 @@
 namespace Atos\Controller;
 
 use Atos\Atos;
-use Atos\Form\ConfigForm;
 use Symfony\Component\Filesystem\Filesystem;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Thelia;
 use Thelia\Exception\FileException;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
+use Thelia\Tools\Version\Version;
 
 /**
  * Class ConfigureController
@@ -69,14 +70,14 @@ class ConfigureController extends BaseAdminController
             return $response;
         }
 
-        $form = new ConfigForm($this->getRequest());
-        $error_msg = null;
+        $configurationForm = $this->createForm('atos_configuration');
+        $message = null;
 
         try {
-            $configForm = $this->validateForm($form);
+            $form = $this->validateForm($configurationForm);
 
             // Get the form field values
-            $data = $configForm->getData();
+            $data = $form->getData();
 
             foreach ($data as $name => $value) {
                 if (is_array($value)) {
@@ -123,18 +124,23 @@ class ConfigureController extends BaseAdminController
 
             return $this->generateRedirect(URL::getInstance()->absoluteUrl($url));
         } catch (FormValidationException $ex) {
-            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+            $message = $this->createStandardFormValidationErrorMessage($ex);
         } catch (\Exception $ex) {
-            $error_msg = $ex->getMessage();
+            $message = $ex->getMessage();
         }
 
         $this->setupFormErrorContext(
             $this->getTranslator()->trans("Atos configuration", [], Atos::MODULE_DOMAIN),
-            $error_msg,
-            $form,
+            $message,
+            $configurationForm,
             $ex
         );
 
-        return $this->generateRedirect(URL::getInstance()->absoluteUrl('/admin/module/Atos'));
+        // Before 2.2, the errored form is not stored in session
+        if (Version::test(Thelia::THELIA_VERSION, '2.2', false, "<")) {
+            return $this->render('module-configure', [ 'module_code' => 'Atos' ]);
+        } else {
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl('/admin/module/Atos'));
+        }
     }
 }

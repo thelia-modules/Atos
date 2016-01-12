@@ -72,14 +72,16 @@ class ConfigForm extends BaseForm
                             'List of IP addresses allowed to use this payment on the front-office when in test mode (your current IP is %ip). One address per line',
                             [ '%ip' => $this->getRequest()->getClientIp() ],
                             Atos::MODULE_DOMAIN
-                        ),
+                        )
+                    ],
+                    'attr' => [
                         'rows' => 3
                     ]
                 ]
             )
             ->add(
                 'atos_minimum_amount',
-                'integer',
+                'text',
                 [
                     'constraints' => [
                         new NotBlank(),
@@ -98,7 +100,7 @@ class ConfigForm extends BaseForm
             )
             ->add(
                 'atos_maximum_amount',
-                'integer',
+                'text',
                 [
                     'constraints' => [
                         new NotBlank(),
@@ -128,7 +130,9 @@ class ConfigForm extends BaseForm
                             [],
                             Atos::MODULE_DOMAIN
                         ),
-                        'rows' => 4
+                    ],
+                    'attr' => [
+                        'rows' => 10
                     ]
                 ]
             )
