@@ -31,43 +31,56 @@
                                 <div class="col-md-4">
                                     <p class="title title-without-tabs">{intl d='atos.ai' l="Atos-SIPS Platform configuration"}</p>
 
-                                    {include file="atos/form-field-template.html" field_name="atos_merchantId"}
-                                    {include file="atos/form-field-template.html" field_name="atos_certificate"}
+                                    {render_form_field form=$form field="atos_merchantId" value=$atos_merchantId}
+                                    {render_form_field form=$form field="atos_certificate" value=$atos_certificate}
+
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            {intl d='atos.ai' l="Callback URL"}
+                                        </label>
+
+                                        <div class="well well-sm">{url path='/atos/callback'}</div>
+
+                                        <span class="help-block">
+                                            {intl d='atos.ai' l="This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines"}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <p class="title title-without-tabs">{intl d='atos.ai' l="Operation mode"}</p>
 
-                                    {include file="atos/form-field-template.html" field_name="atos_mode"}
-                                    {include file="atos/form-field-template.html" field_name="atos_allowed_ip_list"}
+                                    {render_form_field form=$form field="atos_mode" value=$atos_mode}
+                                    {render_form_field form=$form field="atos_allowed_ip_list" value=$atos_allowed_ip_list}
                                 </div>
 
                                 <div class="col-md-4">
                                     <p class="title title-without-tabs">{intl d='atos.ai' l="Payment configuration"}</p>
 
-                                    {include file="atos/form-field-template.html" field_name="atos_minimum_amount"}
-                                    {include file="atos/form-field-template.html" field_name="atos_maximum_amount"}
+                                    {custom_render_form_field form=$form field="send_confirmation_message_only_if_paid"}
+                                        <input type="checkbox" {form_field_attributes form=$form field="send_confirmation_message_only_if_paid"} {if $send_confirmation_message_only_if_paid}checked{/if}>
+                                    {$label}
+                                    {/custom_render_form_field}
+
+                                    {custom_render_form_field form=$form field="send_payment_confirmation_message"}
+                                        <input type="checkbox" {form_field_attributes form=$form field="send_payment_confirmation_message"} {if $send_payment_confirmation_message}checked{/if}>
+                                    {$label}
+                                    {/custom_render_form_field}
+
+                                    <div class="well well-sm">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                        {intl d='paypal.bo.default' l='You can <a href="%url">edit the payment confirmation email</a> sent to the customer after a successful payment.' url={url path="/admin/configuration/messages"}}
+                                    </div>
+
+                                    {render_form_field form=$form field="atos_minimum_amount" value=$atos_minimum_amount}
+                                    {render_form_field form=$form field="atos_maximum_amount" value=$atos_maximum_amount}
                                 </div>
                             </div>
                         </form>
                     {/form}
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    {intl d='atos.ai' l="Callback URL"}
-                                </label>
-
-                                <div class="well well-sm">{url path='/atos/callback'}</div>
-
-                                <span class="help-block">
-                                    {intl d='atos.ai' l="This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines"}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="cold-xs-12 col-md-8">
+                        <div class="col-xs-12">
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
                                     <h3 class="panel-title">

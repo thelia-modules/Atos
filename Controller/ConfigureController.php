@@ -15,13 +15,11 @@ namespace Atos\Controller;
 use Atos\Atos;
 use Atos\Form\ConfigForm;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Exception\FileException;
 use Thelia\Form\Exception\FormValidationException;
-use Thelia\Model\ConfigQuery;
 use Thelia\Tools\URL;
 
 /**
@@ -31,34 +29,9 @@ use Thelia\Tools\URL;
  */
 class ConfigureController extends BaseAdminController
 {
-    public function displayConfigurationPage()
-    {
-        $logFilePath = sprintf(THELIA_ROOT."log".DS."%s.log", Atos::MODULE_DOMAIN);
-
-        $traces = @file_get_contents($logFilePath);
-
-        if (false === $traces) {
-            $traces = $this->getTranslator()->trans(
-                "The log file '%log' does not exists yet.",
-                [ '%log' => $logFilePath ],
-                Atos::MODULE_DOMAIN
-            );
-        } elseif (empty($traces)) {
-            $traces = $this->getTranslator()->trans("The log file is currently empty.", [], Atos::MODULE_DOMAIN);
-        }
-
-        return $this->render(
-            'module-configure',
-            [
-                'module_code' => 'Atos',
-                'trace_content' => nl2br($traces)
-            ]
-        );
-    }
-
     public function copyDistFile($fileName, $merchantId)
     {
-        $distFile =  Atos::getConfigDirectory() . $fileName . '.dist';
+        $distFile = Atos::getConfigDirectory() . $fileName . '.dist';
         $destFile = Atos::getConfigDirectory() . $fileName . '.' . $merchantId;
 
         if (! is_readable($destFile)) {
@@ -77,7 +50,7 @@ class ConfigureController extends BaseAdminController
 
     public function checkExecutable($fileName)
     {
-        $binFile = Atos::getBinDirectory() . DS . $fileName;
+        $binFile = Atos::getBinDirectory() . $fileName;
 
         if (! is_executable($binFile)) {
             throw new FileException(
@@ -110,7 +83,7 @@ class ConfigureController extends BaseAdminController
                     $value = implode(';', $value);
                 }
 
-                ConfigQuery::write($name, $value, 1, 1);
+                Atos::setConfigValue($name, $value);
             }
 
             $merchantId = $data['atos_merchantId'];
@@ -142,34 +115,26 @@ class ConfigureController extends BaseAdminController
             // Redirect to the success URL,
             if ($this->getRequest()->get('save_mode') == 'stay') {
                 // If we have to stay on the same page, redisplay the configuration page/
-                $route = '/admin/module/Atos';
+                $url = '/admin/module/Atos';
             } else {
                 // If we have to close the page, go back to the module back-office page.
-                $route = '/admin/modules';
+                $url = '/admin/modules';
             }
 
-            $response = RedirectResponse::create(URL::getInstance()->absoluteUrl($route));
-
-        } catch (FormValidationException $e) {
-            $error_msg = $this->createStandardFormValidationErrorMessage($e);
-        } catch (\Exception $e) {
-            $error_msg = $e->getMessage();
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl($url));
+        } catch (FormValidationException $ex) {
+            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\Exception $ex) {
+            $error_msg = $ex->getMessage();
         }
 
-        if (null !== $error_msg) {
-            $this->setupFormErrorContext(
-                'Atos Configuration',
-                $error_msg,
-                $form,
-                $e
-            );
+        $this->setupFormErrorContext(
+            $this->getTranslator()->trans("Atos configuration", [], Atos::MODULE_DOMAIN),
+            $error_msg,
+            $form,
+            $ex
+        );
 
-            $response = $this->render(
-                'module-configure',
-                ['module_code' => 'Atos']
-            );
-        }
-
-        return $response;
+        return $this->generateRedirect(URL::getInstance()->absoluteUrl('/admin/module/Atos'));
     }
 }

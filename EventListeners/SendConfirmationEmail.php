@@ -16,7 +16,6 @@ use Atos\Atos;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\Template\ParserInterface;
 use Thelia\Log\Tlog;
 use Thelia\Mailer\MailerFactory;
 
@@ -24,67 +23,72 @@ use Thelia\Mailer\MailerFactory;
  * Class SendEmailConfirmation
  * @package Atos\EventListeners
  * @author manuel raynaud <mraynaud@openstudio.fr>
+ * @author franck allimant <franck@cqfdev.fr>
  */
 class SendConfirmationEmail implements EventSubscriberInterface
 {
-    /**
-     * @var ParserInterface
-     */
-    protected $parser;
-
     /**
      * @var MailerFactory
      */
     protected $mailer;
 
-    public function __construct(ParserInterface $parser, MailerFactory $mailer)
+    public function __construct(MailerFactory $mailer)
     {
-        $this->parser = $parser;
         $this->mailer = $mailer;
     }
 
+    /**
+     * @param OrderEvent $event
+     *
+     * @throws \Exception if the message cannot be loaded.
+     */
+    public function sendConfirmationEmail(OrderEvent $event)
+    {
+        if (Atos::getConfigValue('send_confirmation_message_only_if_paid')) {
+            // We send the order confirmation email only if the order is paid
+            $order = $event->getOrder();
+
+            if (! $order->isPaid() && $order->getPaymentModuleId() == Atos::getModuleId()) {
+                $event->stopPropagation();
+            }
+        }
+    }
+
+    /*
+     * @params OrderEvent $order
+     * Checks if order payment module is paypal and if order new status is paid, send an email to the customer.
+     */
+
     public function updateStatus(OrderEvent $event)
     {
-        $atos = new Atos();
         $order = $event->getOrder();
-        if ($order->isPaid() && $atos->isPaymentModuleFor($order)) {
-            $this->mailer->sendEmailToCustomer(
-                Atos::CONFIRMATION_MESSAGE_NAME,
-                $order->getCustomer(),
-                [
-                    'order_id' => $order->getId(),
-                    'order_ref' => $order->getRef()
-                ]
-            );
+
+        if ($order->isPaid() && $order->getPaymentModuleId() == Atos::getModuleId()) {
+            if (Atos::getConfigValue('send_payment_confirmation_message')) {
+                $this->mailer->sendEmailToCustomer(
+                    Atos::CONFIRMATION_MESSAGE_NAME,
+                    $order->getCustomer(),
+                    [
+                        'order_id'  => $order->getId(),
+                        'order_ref' => $order->getRef()
+                    ]
+                );
+            }
+
+            // Send confirmation email if required.
+            if (Atos::getConfigValue('send_confirmation_message_only_if_paid')) {
+                $event->getDispatcher()->dispatch(TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL, $event);
+            }
 
             Tlog::getInstance()->debug("Confirmation email sent to customer " . $order->getCustomer()->getEmail());
         }
     }
 
-    /**
-     * Returns an array of event names this subscriber wants to listen to.
-     *
-     * The array keys are event names and the value can be:
-     *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
-     *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
-     *
-     * For instance:
-     *
-     *  * array('eventName' => 'methodName')
-     *  * array('eventName' => array('methodName', $priority))
-     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2'))
-     *
-     * @return array The event names to listen to
-     *
-     * @api
-     */
     public static function getSubscribedEvents()
     {
-        return [
-            TheliaEvents::ORDER_UPDATE_STATUS => ["updateStatus", 128]
-        ];
+        return array(
+            TheliaEvents::ORDER_UPDATE_STATUS           => array("updateStatus", 128),
+            TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL => array("sendConfirmationEmail", 129)
+        );
     }
 }
