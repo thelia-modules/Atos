@@ -248,6 +248,10 @@ class Atos extends AbstractPaymentModule
             } else {
                 $parser = $this->getContainer()->get('thelia.parser');
 
+                $parser->setTemplateDefinition(
+                    $parser->getTemplateHelper()->getActiveFrontTemplate()
+                );
+
                 $content = $parser->renderString(
                     file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
                     [
