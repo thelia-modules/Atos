@@ -37,6 +37,6 @@ return array(
     'Test or production mode' => 'Test ou production',
     'The \'%file\' should be executable. Please check file permission' => 'Le fichier %file doit être exécutable. Vérifier que ce fichier a les permission nécessaires/.',
     'The log file \'%log\' does not exists yet.' => 'Le fichier de log %log n\'existe pas encore.',
-    'The log file is currently empty.' => 'Le fchier de log est vide',
+    'The log file is currently empty.' => 'Le fichier de log est vide',
     'you cancel the payment' => 'Vous avez annulé le paiement',
 );
