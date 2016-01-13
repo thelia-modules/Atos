@@ -36,7 +36,7 @@ class PaymentController extends BasePaymentModuleController
             )
         );
 
-        $binResponse = Atos::getBinDirectory() .DS . 'response';
+        $binResponse = Atos::getBinDirectory() . 'response';
 
         if (! empty($_POST['DATA'])) {
             $data = escapeshellcmd($_POST['DATA']);

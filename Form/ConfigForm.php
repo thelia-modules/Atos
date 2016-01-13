@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
-use Thelia\Model\ConfigQuery;
 
 /**
  * Class Config
@@ -32,11 +31,11 @@ class ConfigForm extends BaseForm
         $this->formBuilder
             ->add(
                 'atos_merchantId',
-                'text', [
+                'text',
+                [
                     'constraints' => [
                         new NotBlank(),
                     ],
-                    'data' => ConfigQuery::read('atos_merchantId', '12345678'),
                     'label' => $translator->trans('Shop Merchant ID', [], Atos::MODULE_DOMAIN),
                     'label_attr' => [
                         'for' => 'merchant_id',
@@ -45,7 +44,8 @@ class ConfigForm extends BaseForm
             )
             ->add(
                 'atos_mode',
-                'choice', [
+                'choice',
+                [
                     'constraints' =>  [
                         new NotBlank()
                     ],
@@ -54,7 +54,6 @@ class ConfigForm extends BaseForm
                         'PRODUCTION' => $translator->trans('Production', [], Atos::MODULE_DOMAIN),
                     ],
                     'label' => $translator->trans('Operation Mode', [], Atos::MODULE_DOMAIN),
-                    'data' => ConfigQuery::read('atos_mode', 'TEST'),
                     'label_attr' => [
                         'for' => 'mode',
                         'help' => $translator->trans('Test or production mode', [], Atos::MODULE_DOMAIN)
@@ -67,47 +66,54 @@ class ConfigForm extends BaseForm
                 [
                     'required' => false,
                     'label' => $translator->trans('Allowed IPs in test mode', [], Atos::MODULE_DOMAIN),
-                    'data' => ConfigQuery::read('atos_allowed_ip_list', ''),
                     'label_attr' => [
                         'for' => 'platform_url',
                         'help' => $translator->trans(
                             'List of IP addresses allowed to use this payment on the front-office when in test mode (your current IP is %ip). One address per line',
                             [ '%ip' => $this->getRequest()->getClientIp() ],
                             Atos::MODULE_DOMAIN
-                        ),
+                        )
+                    ],
+                    'attr' => [
                         'rows' => 3
                     ]
                 ]
             )
             ->add(
                 'atos_minimum_amount',
-                'money',
+                'text',
                 [
                     'constraints' => [
                         new NotBlank(),
-                        new GreaterThanOrEqual( ['value' => 0 ])
+                        new GreaterThanOrEqual(['value' => 0 ])
                     ],
                     'label' => $translator->trans('Minimum order total', [], Atos::MODULE_DOMAIN),
-                    'data' => ConfigQuery::read('atos_minimum_amount', '0'),
                     'label_attr' => [
                         'for' => 'minimum_amount',
-                        'help' => $translator->trans('Minimum order total in the default currency for which this payment method is available. Enter 0 for no minimum', [], Atos::MODULE_DOMAIN)
+                        'help' => $translator->trans(
+                            'Minimum order total in the default currency for which this payment method is available. Enter 0 for no minimum',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
                     ]
                 ]
             )
             ->add(
                 'atos_maximum_amount',
-                'money',
+                'text',
                 [
                     'constraints' => [
                         new NotBlank(),
                         new GreaterThanOrEqual([ 'value' => 0 ])
                     ],
                     'label' => $translator->trans('Maximum order total', [], Atos::MODULE_DOMAIN),
-                    'data' => ConfigQuery::read('atos_maximum_amount', '0'),
                     'label_attr' => [
                         'for' => 'maximum_amount',
-                        'help' => $translator->trans('Maximum order total in the default currency for which this payment method is available. Enter 0 for no maximum', [], Atos::MODULE_DOMAIN)
+                        'help' => $translator->trans(
+                            'Maximum order total in the default currency for which this payment method is available. Enter 0 for no maximum',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
                     ]
                 ]
             )
@@ -117,7 +123,6 @@ class ConfigForm extends BaseForm
                 [
                     'required' => false,
                     'label' => $translator->trans('ATOS certificate content', [], Atos::MODULE_DOMAIN),
-                    'data' => ConfigQuery::read('atos_certificate', ''),
                     'label_attr' => [
                         'for' => 'platform_url',
                         'help' => $translator->trans(
@@ -125,7 +130,41 @@ class ConfigForm extends BaseForm
                             [],
                             Atos::MODULE_DOMAIN
                         ),
-                        'rows' => 4
+                    ],
+                    'attr' => [
+                        'rows' => 10
+                    ]
+                ]
+            )
+            ->add(
+                'send_confirmation_message_only_if_paid',
+                'checkbox',
+                [
+                    'value' => 1,
+                    'required' => false,
+                    'label' => $this->translator->trans('Send order confirmation on payment success', [], Atos::MODULE_DOMAIN),
+                    'label_attr' => [
+                        'help' => $this->translator->trans(
+                            'If checked, the order confirmation message is sent to the customer only when the payment is successful. The order notification is always sent to the shop administrator',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
+                    ]
+                ]
+            )
+            ->add(
+                'send_payment_confirmation_message',
+                'checkbox',
+                [
+                    'value' => 1,
+                    'required' => false,
+                    'label' => $this->translator->trans('Send a payment confirmation e-mail', [], Atos::MODULE_DOMAIN),
+                    'label_attr' => [
+                        'help' => $this->translator->trans(
+                            'If checked, a payment confirmation e-mail is sent to the customer.',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
                     ]
                 ]
             )

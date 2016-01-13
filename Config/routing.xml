@@ -4,10 +4,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="atos.configure.display" path="/admin/module/Atos">
-        <default key="_controller">Atos\Controller\ConfigureController::displayConfigurationPage</default>
-    </route>
-
     <route id="atos.config" path="/admin/module/atos/configure" methods="post">
         <default key="_controller">Atos\Controller\ConfigureController::configure</default>
     </route>

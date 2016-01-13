@@ -13,6 +13,7 @@
 namespace Atos;
 
 use Atos\Model\AtosCurrencyQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
@@ -39,16 +40,23 @@ class Atos extends AbstractPaymentModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        if (null === ConfigQuery::read('atos_merchantId')) {
-            $merchantConfig = new Config();
+        // Setup some default values
+        if (null === self::getConfigValue('atos_merchantId', null)) {
+            self::setConfigValue('atos_transactionId', 1);
+            self::setConfigValue('minimum_amount', 0);
+            self::setConfigValue('maximum_amount', 0);
+            self::setConfigValue('send_payment_confirmation_message', 1);
+        }
 
-            $merchantConfig->setName('atos_merchantId')
-                ->setHidden(true)
-                ->setSecured(true)
-                ->save($con);
-            ;
+        // Try to chmod binaries if they're not executables
+        $binFile = self::getBinDirectory() . 'request';
+        if (! is_executable($binFile)) {
+            @chmod($binFile, 0755);
+        }
 
-            ConfigQuery::write('atos_transactionId', 1, 1, 1);
+        $binFile = self::getBinDirectory() . 'response';
+        if (! is_executable($binFile)) {
+            @chmod($binFile, 0755);
         }
 
         $database = new Database($con);
@@ -65,24 +73,47 @@ class Atos extends AbstractPaymentModule
 
             $message
                 ->setName(self::CONFIRMATION_MESSAGE_NAME)
-
+                ->setHtmlTemplateFileName('atos-payment-confirmation.html')
+                ->setTextTemplateFileName('atos-payment-confirmation.txt')
                 ->setLocale('en_US')
                 ->setTitle('Atos payment confirmation')
                 ->setSubject('Payment of order {$order_ref}')
-                ->setHtmlMessage(file_get_contents($email_templates_dir.'en.html'))
-                ->setTextMessage(file_get_contents($email_templates_dir.'en.txt'))
-
                 ->setLocale('fr_FR')
                 ->setTitle('Confirmation de paiement par Atos')
                 ->setSubject('Confirmation du paiement de votre commande {$order_ref}')
-                ->setHtmlMessage(file_get_contents($email_templates_dir.'fr.html'))
-                ->setTextMessage(file_get_contents($email_templates_dir.'fr.txt'))
-
                 ->save()
             ;
         }
 
         $this->replacePath();
+    }
+
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    {
+        // Migrate old configuration
+        if (null === self::getConfigValue('atos_merchantId', null)) {
+            if (null !== $atosConfigs = ConfigQuery::create()->filterByName('atos_%', Criteria::LIKE)->find()) {
+                /** @var Config $atosConfig */
+                foreach ($atosConfigs as $atosConfig) {
+                    Atos::setConfigValue($atosConfig->getName(), $atosConfig->getValue());
+
+                    $atosConfig->delete($con);
+                }
+            }
+        }
+
+        parent::update($currentVersion, $newVersion, $con);
+    }
+
+    public function destroy(ConnectionInterface $con = null, $deleteModuleData = false)
+    {
+        if ($deleteModuleData) {
+            $database = new Database($con);
+
+            $database->execute('drop table `atos_currency`');
+
+            MessageQuery::create()->findOneByName(self::CONFIRMATION_MESSAGE_NAME)->delete();
+        }
     }
 
     protected function replacePath()
@@ -135,20 +166,19 @@ class Atos extends AbstractPaymentModule
      *
      * generate a transaction id for atos solution
      *
-     * @param  Order     $order
      * @return int|mixed
      */
-    private function generateTransactionID(Order $order)
+    private function generateTransactionID()
     {
-        $transId = ConfigQuery::read('atos_transactionId', 1);
+        $transId = self::getConfigValue('atos_transactionId', 1);
 
-        $transId = 1 + $transId;
+        $transId = 1 + intval($transId);
 
         if (strlen($transId) > 6) {
             $transId = 1;
         }
 
-        ConfigQuery::write('atos_transactionId', $transId, 1, 1);
+        self::setConfigValue('atos_transactionId', $transId);
 
         return sprintf("%06d", $transId);
     }
@@ -185,14 +215,14 @@ class Atos extends AbstractPaymentModule
         $amount = $order->getTotalAmount();
         $amount = number_format($amount, $atosCurrency->getDecimals(), '', '');
 
-        $transactionId = $this->generateTransactionID($order);
+        $transactionId = $this->generateTransactionID();
 
         $order->setTransactionRef($transactionId)->save();
 
         $router = $this->getContainer()->get('router.atos');
 
         $this->addParam('pathfile', self::getPathfilePath())
-            ->addParam('merchant_id', ConfigQuery::read('atos_merchantId'))
+            ->addParam('merchant_id', self::getConfigValue('atos_merchantId'))
             ->addParam('customer_email', $order->getCustomer()->getEmail())
             ->addParam('currency_code', $atosCurrency->getAtosCode())
             ->addParam('amount', $amount)
@@ -218,10 +248,14 @@ class Atos extends AbstractPaymentModule
             } else {
                 $parser = $this->getContainer()->get('thelia.parser');
 
+                $parser->setTemplateDefinition(
+                    $parser->getTemplateHelper()->getActiveFrontTemplate()
+                );
+
                 $content = $parser->renderString(
                     file_get_contents(__DIR__ . DS . 'templates' . DS . 'atos' . DS . 'payment.html'),
                     [
-                        'site_name' => ConfigQuery::read('store_name'),
+                        'site_name' => self::getConfigValue('store_name'),
                         'form' => $datas[3]
                     ]
                 );
@@ -248,15 +282,15 @@ class Atos extends AbstractPaymentModule
         $valid = false;
 
         // Check config files
-        $parmcomFile = self::getConfigDirectory() . 'parmcom.' . ConfigQuery::read('atos_merchantId', '0');
-        $certifFile = self::getConfigDirectory() . 'certif.fr.' . ConfigQuery::read('atos_merchantId', '0');
+        $parmcomFile = self::getConfigDirectory() . 'parmcom.' . self::getConfigValue('atos_merchantId', '0');
+        $certifFile = self::getConfigDirectory() . 'certif.fr.' . self::getConfigValue('atos_merchantId', '0');
 
         if (is_readable($parmcomFile) && is_readable($certifFile)) {
-            $mode = ConfigQuery::read('atos_mode', false);
+            $mode = self::getConfigValue('atos_mode', false);
 
             // If we're in test mode, do not display Payzen on the front office, except for allowed IP addresses.
             if ('TEST' == $mode) {
-                $raw_ips = explode("\n", ConfigQuery::read('atos_allowed_ip_list', ''));
+                $raw_ips = explode("\n", self::getConfigValue('atos_allowed_ip_list', ''));
 
                 $allowed_client_ips = array();
 
@@ -268,7 +302,7 @@ class Atos extends AbstractPaymentModule
 
                 $valid = in_array($client_ip, $allowed_client_ips);
 
-            } else if ('PRODUCTION' == $mode) {
+            } elseif ('PRODUCTION' == $mode) {
                 $valid = true;
             }
 
@@ -298,8 +332,8 @@ class Atos extends AbstractPaymentModule
         // Check if total order amount is in the module's limits
         $order_total = $this->getCurrentOrderTotalAmount();
 
-        $min_amount = ConfigQuery::read('atos_minimum_amount', 0);
-        $max_amount = ConfigQuery::read('atos_maximum_amount', 0);
+        $min_amount = self::getConfigValue('atos_minimum_amount', 0);
+        $max_amount = self::getConfigValue('atos_maximum_amount', 0);
 
         return
             $order_total > 0
