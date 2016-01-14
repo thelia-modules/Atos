@@ -8,6 +8,10 @@
         <default key="_controller">Atos\Controller\ConfigureController::configure</default>
     </route>
 
+    <route id="atos.download.log" path="/admin/module/atos/log">
+        <default key="_controller">Atos\Controller\ConfigureController::downloadLog</default>
+    </route>
+
     <route id="atos.logo" path="atos/logo/{image}">
         <default key="_controller">Atos\Controller\PaymentController::displayLogo</default>
     </route>

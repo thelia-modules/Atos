@@ -5,6 +5,7 @@ return array(
     'Atos-SIPS Platform configuration' => 'Atos-SIPS Platform configuration',
     'Atos-SIPS call log to callback URL' => 'Atos-SIPS call log to callback URL',
     'Callback URL' => 'Callback URL',
+    'Download full log' => 'Download full log',
     'Operation mode' => 'Operation mode',
     'Payment configuration' => 'Payment configuration',
     'This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines' => 'This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote machines',

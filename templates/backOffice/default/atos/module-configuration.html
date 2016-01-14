@@ -2,7 +2,7 @@
     <div class="col-md-12 general-block-decorator">
         <div class="row">
             <div class="col-md-12 title title-without-tabs">
-                {intl d='atos' l="Atos Configuration"}
+                {intl d='atos.bo.default' l="Atos Configuration"}
             </div>
         </div>
 
@@ -29,33 +29,33 @@
 
                             <div class="row">
                                 <div class="col-md-4">
-                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Atos-SIPS Platform configuration"}</p>
+                                    <p class="title title-without-tabs">{intl d='atos.bo.default' l="Atos-SIPS Platform configuration"}</p>
 
                                     {render_form_field form=$form field="atos_merchantId" value=$atos_merchantId}
                                     {render_form_field form=$form field="atos_certificate" value=$atos_certificate}
 
                                     <div class="form-group">
                                         <label class="control-label">
-                                            {intl d='atos.ai' l="Callback URL"}
+                                            {intl d='atos.bo.default' l="Callback URL"}
                                         </label>
 
                                         <div class="well well-sm">{url path='/atos/callback'}</div>
 
                                         <span class="help-block">
-                                            {intl d='atos.ai' l="This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines"}
+                                            {intl d='atos.bo.default' l="This is the callback URL, that will be called by Atos SIPS after customer payment. Be sure that this URL is reachable by remote mechines"}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Operation mode"}</p>
+                                    <p class="title title-without-tabs">{intl d='atos.bo.default' l="Operation mode"}</p>
 
                                     {render_form_field form=$form field="atos_mode" value=$atos_mode}
                                     {render_form_field form=$form field="atos_allowed_ip_list" value=$atos_allowed_ip_list}
                                 </div>
 
                                 <div class="col-md-4">
-                                    <p class="title title-without-tabs">{intl d='atos.ai' l="Payment configuration"}</p>
+                                    <p class="title title-without-tabs">{intl d='atos.bo.default' l="Payment configuration"}</p>
 
                                     {custom_render_form_field form=$form field="send_confirmation_message_only_if_paid"}
                                         <input type="checkbox" {form_field_attributes form=$form field="send_confirmation_message_only_if_paid"} {if $send_confirmation_message_only_if_paid}checked{/if}>
@@ -85,13 +85,16 @@
                                 <div class="panel-heading">
                                     <h3 class="panel-title">
                                         <span class="glyphicon glyphicon-cog"></span>
-                                        {intl d='paybox.ai' l="Atos-SIPS call log to callback URL"}
+                                        {intl d='atos.bo.default' l="Atos-SIPS call log to callback URL"}
                                     </h3>
                                 </div>
                                 <div class="panel-body">
                                     <div id="log-container" style="font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: scroll">
                                         {$trace_content nofilter}
                                     </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <a href="{url path='/admin/module/atos/log'}" class="btn btn-sm btn-primary">{intl d='atos.bo.default' l="Download full log"}</a>
                                 </div>
                             </div>
                         </div>

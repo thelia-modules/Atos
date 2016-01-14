@@ -14,6 +14,7 @@ namespace Atos\Controller;
 
 use Atos\Atos;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Response;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
@@ -62,6 +63,25 @@ class ConfigureController extends BaseAdminController
                 )
             );
         }
+    }
+
+    public function downloadLog()
+    {
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, 'atos', AccessManager::UPDATE)) {
+            return $response;
+        }
+
+        $logFilePath = sprintf(THELIA_ROOT."log".DS."%s.log", Atos::MODULE_DOMAIN);
+
+        return Response::create(
+            @file_get_contents($logFilePath),
+            200,
+            array(
+                'Content-type' => "text/plain",
+                'Content-Disposition' => sprintf('Attachment;filename=atos-log.txt')
+            )
+        );
+
     }
 
     public function configure()

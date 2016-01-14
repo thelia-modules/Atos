@@ -34,6 +34,8 @@ use Thelia\Model\ModuleConfigQuery;
 
 class HookManager extends BaseHook
 {
+    const MAX_TRACE_SIZE_IN_BYTES = 40000;
+
     public function onModuleConfigure(HookRenderEvent $event)
     {
         $logFilePath = sprintf(THELIA_ROOT."log".DS."%s.log", Atos::MODULE_DOMAIN);
@@ -48,9 +50,24 @@ class HookManager extends BaseHook
             );
         } elseif (empty($traces)) {
             $traces = $this->translator->trans("The log file is currently empty.", [], Atos::MODULE_DOMAIN);
+        } else {
+            // Limiter la taille des traces à 1MO
+            if (strlen($traces) > self::MAX_TRACE_SIZE_IN_BYTES) {
+                $traces = substr($traces, strlen($traces) - self::MAX_TRACE_SIZE_IN_BYTES);
+                // Cut a first line break;
+                if (false !== $lineBreakPos = strpos($traces, "\n")) {
+                    $traces = substr($traces, $lineBreakPos+1);
+                }
+
+                $traces = $this->translator->trans(
+                    "(Previous log is in %file file.)\n",
+                    [ '%file' => sprintf("log".DS."%s.log", Atos::MODULE_DOMAIN) ],
+                    Atos::MODULE_DOMAIN
+                ) . $traces;
+            }
         }
 
-        $vars = ['trace_content' => nl2br($traces)  ];
+        $vars = [ 'trace_content' => nl2br($traces)  ];
 
         if (null !== $params = ModuleConfigQuery::create()->findByModuleId(Atos::getModuleId())) {
             /** @var ModuleConfig $param */
