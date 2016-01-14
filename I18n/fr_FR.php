@@ -1,6 +1,7 @@
 <?php
 
 return array(
+    '(Previous log is in %file file.)\n' => '(L\'historique précédent se trouve dans n %file file.)\n',
     'ATOS certificate content' => 'Certificat ATOS',
     'Allowed IPs in test mode' => 'Adresse IP autorisées en phase de test',
     'Atos configuration' => 'Configuration ATOS-SIPS',

@@ -1,6 +1,7 @@
 <?php
 
 return array(
+    '(Previous log is in %file file.)\n' => '(Previous log is in %file file.)\n',
     'ATOS certificate content' => 'ATOS certificate content',
     'Allowed IPs in test mode' => 'Allowed IPs in test mode',
     'Atos configuration' => 'Atos configuration',
