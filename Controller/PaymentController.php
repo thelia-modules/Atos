@@ -14,8 +14,12 @@ namespace Atos\Controller;
 
 use Atos\Atos;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Thelia\Core\Event\Order\OrderEvent;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Response;
+use Thelia\Exception\TheliaProcessException;
 use Thelia\Model\OrderQuery;
+use Thelia\Model\OrderStatusQuery;
 use Thelia\Module\BasePaymentModuleController;
 
 /**
@@ -78,9 +82,9 @@ class PaymentController extends BasePaymentModuleController
                     $atos = new Atos();
 
                     $order = OrderQuery::create()
-                        ->filterByTransactionRef($result['transaction_id'])
-                        ->filterByPaymentModuleId($atos->getModuleModel()->getId())
-                        ->findOne();
+                                       ->filterByTransactionRef($result['transaction_id'])
+                                       ->filterByPaymentModuleId($atos->getModuleModel()->getId())
+                                       ->findOne();
 
                     if ($order) {
                         $this->confirmPayment($order->getId());
@@ -138,6 +142,50 @@ class PaymentController extends BasePaymentModuleController
         );
 
         return Response::create();
+    }
+
+    /*
+     * @param $orderId int the order ID
+     * @return \Thelia\Core\HttpFoundation\Response
+     */
+    public function processUserCancel($orderId)
+    {
+        $this->getLog()->addInfo(
+            $this->getTranslator()->trans(
+                'User canceled payment of order %id',
+                ['%id' => $orderId],
+                Atos::MODULE_DOMAIN
+            )
+        );
+
+        try {
+            if (null !== $order = OrderQuery::create()->findPk($orderId)) {
+                $currentCustomerId = $this->getSecurityContext()->getCustomerUser()->getId();
+                $orderCustomerId = $order->getCustomerId();
+
+                if ($orderCustomerId != $currentCustomerId) {
+                    throw new TheliaProcessException(
+                        sprintf(
+                            "User ID %d is trying to cancel order ID %d ordered by user ID %d",
+                            $currentCustomerId,
+                            $orderId,
+                            $orderCustomerId
+                        )
+                    );
+                }
+
+                $event = new OrderEvent($order);
+                $event->setStatus(OrderStatusQuery::getCancelledStatus()->getId());
+                $this->dispatch(TheliaEvents::ORDER_UPDATE_STATUS, $event);
+            }
+        } catch (\Exception $ex) {
+            $this->getLog()->addError("Error occurred while canceling order ID $orderId: " . $ex->getMessage());
+        }
+
+        $this->redirectToFailurePage(
+            $orderId,
+            $this->getTranslator()->trans('you cancel the payment', [], Atos::MODULE_DOMAIN)
+        );
     }
 
     protected function parseResult($result)
