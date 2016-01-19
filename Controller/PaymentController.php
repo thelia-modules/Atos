@@ -82,9 +82,9 @@ class PaymentController extends BasePaymentModuleController
                     $atos = new Atos();
 
                     $order = OrderQuery::create()
-                                       ->filterByTransactionRef($result['transaction_id'])
-                                       ->filterByPaymentModuleId($atos->getModuleModel()->getId())
-                                       ->findOne();
+                        ->filterByTransactionRef($result['transaction_id'])
+                        ->filterByPaymentModuleId($atos->getModuleModel()->getId())
+                        ->findOne();
 
                     if ($order) {
                         $this->confirmPayment($order->getId());

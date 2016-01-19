@@ -201,8 +201,9 @@ class Atos extends AbstractPaymentModule
     {
         $pathBin = self::getBinDirectory() .'request';
 
-        $atosCurrency = AtosCurrencyQuery::create()
-                                         ->findPk($order->getCurrency()->getCode());
+        $atosCurrency = AtosCurrencyQuery::create()->findPk(
+            $order->getCurrency()->getCode()
+        );
 
         if (null == $atosCurrency) {
             throw new \InvalidArgumentException(
@@ -223,17 +224,18 @@ class Atos extends AbstractPaymentModule
         /** @var Router $router */
         $router = $this->getContainer()->get('router.atos');
 
-        $this->addParam('pathfile', self::getPathfilePath())
-             ->addParam('merchant_id', self::getConfigValue('atos_merchantId'))
-             ->addParam('customer_email', $order->getCustomer()->getEmail())
-             ->addParam('currency_code', $atosCurrency->getAtosCode())
-             ->addParam('amount', $amount)
-             ->addParam('language', $order->getLang()->getCode())
-             ->addParam('transaction_id', $transactionId)
-             ->addParam('order_id', $order->getId())
-             ->addParam('automatic_response_url', URL::getInstance()->absoluteUrl($router->generate('atos.payment.confirmation')))
-             ->addParam('cancel_return_url', URL::getInstance()->absoluteUrl($router->generate('atos.payment.cancel', [ 'orderId' => $order->getId() ])))
-             ->addParam('normal_return_url', $this->getPaymentSuccessPageUrl($order->getId()))
+        $this
+            ->addParam('pathfile', self::getPathfilePath())
+            ->addParam('merchant_id', self::getConfigValue('atos_merchantId'))
+            ->addParam('customer_email', $order->getCustomer()->getEmail())
+            ->addParam('currency_code', $atosCurrency->getAtosCode())
+            ->addParam('amount', $amount)
+            ->addParam('language', $order->getLang()->getCode())
+            ->addParam('transaction_id', $transactionId)
+            ->addParam('order_id', $order->getId())
+            ->addParam('automatic_response_url', URL::getInstance()->absoluteUrl($router->generate('atos.payment.confirmation')))
+            ->addParam('cancel_return_url', URL::getInstance()->absoluteUrl($router->generate('atos.payment.cancel', [ 'orderId' => $order->getId() ])))
+            ->addParam('normal_return_url', $this->getPaymentSuccessPageUrl($order->getId()))
         ;
 
         $encrypt = exec(sprintf("%s %s", $pathBin, $this->getParameters()));
