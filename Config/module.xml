@@ -7,10 +7,10 @@
     <descriptive locale="fr_FR">
         <title>Module de paiement Atos-SIPS</title>
     </descriptive>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <author>
-        <name>Manuel Raynaud</name>
-        <email>manu@thelia.net</email>
+        <name>Manuel Raynaud, Franck Allimant</name>
+        <email>manu@thelia.net, franck@cqfdev.fr</email>
     </author>
     <type>payment</type>
     <thelia>2.1.0</thelia>

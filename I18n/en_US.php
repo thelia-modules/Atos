@@ -39,5 +39,6 @@ return array(
     'The \'%file\' should be executable. Please check file permission' => 'The \'%file\' should be executable. Please check file permission',
     'The log file \'%log\' does not exists yet.' => 'The log file \'%log\' does not exists yet.',
     'The log file is currently empty.' => 'The log file is currently empty.',
+    'User canceled payment of order %id' => 'User canceled payment of order ID %id',
     'you cancel the payment' => 'you cancel the payment',
 );
