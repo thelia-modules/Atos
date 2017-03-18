@@ -17,6 +17,8 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
+use Thelia\Model\Module;
+use Thelia\Model\ModuleQuery;
 
 /**
  * Class Config
@@ -26,6 +28,10 @@ class ConfigForm extends BaseForm
 {
     protected function buildForm()
     {
+        // If the Multi plugin is not enabled, all multi_fields are hidden
+        /** @var Module $multiModule */
+        $multiEnabled = (null !== $multiModule = ModuleQuery::create()->findOneByCode('AtosNx')) && $multiModule->getActivate() != 0;
+    
         $translator = Translator::getInstance();
 
         $this->formBuilder
@@ -168,7 +174,68 @@ class ConfigForm extends BaseForm
                     ]
                 ]
             )
-
+            
+            // -- Multiple times payement parameters, hidden id the AtosNx module is not activated.
+            ->add(
+                'nx_nb_installments',
+                $multiEnabled ? 'text' : 'hidden',
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new GreaterThanOrEqual(['value' => 1 ])
+                    ],
+                    'required' => $multiEnabled,
+                    'label' => $translator->trans('Number of installments', [], Atos::MODULE_DOMAIN),
+                    'label_attr' => [
+                        'for' => 'nx_nb_installments',
+                        'help' => $translator->trans(
+                            'Number of installements. Should be more than one',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
+                    ]
+                ]
+            )
+            ->add(
+                'nx_minimum_amount',
+                $multiEnabled ? 'text' : 'hidden',
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new GreaterThanOrEqual(['value' => 0 ])
+                    ],
+                    'required' => $multiEnabled,
+                    'label' => $translator->trans('Minimum order total', [], Atos::MODULE_DOMAIN),
+                    'label_attr' => [
+                        'for' => 'nx_minimum_amount',
+                        'help' => $translator->trans(
+                            'Minimum order total in the default currency for which the multiple times payment method is available. Enter 0 for no minimum',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
+                    ]
+                ]
+            )
+            ->add(
+                'nx_maximum_amount',
+                $multiEnabled ? 'text' : 'hidden',
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new GreaterThanOrEqual([ 'value' => 0 ])
+                    ],
+                    'required' => $multiEnabled,
+                    'label' => $translator->trans('Maximum order total', [], Atos::MODULE_DOMAIN),
+                    'label_attr' => [
+                        'for' => 'nx_maximum_amount',
+                        'help' => $translator->trans(
+                            'Maximum order total in the default currency for which the multiple times payment method is available. Enter 0 for no maximum',
+                            [],
+                            Atos::MODULE_DOMAIN
+                        )
+                    ]
+                ]
+            )
         ;
     }
 
