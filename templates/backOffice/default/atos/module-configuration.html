@@ -52,6 +52,19 @@
 
                                     {render_form_field form=$form field="atos_mode" value=$atos_mode}
                                     {render_form_field form=$form field="atos_allowed_ip_list" value=$atos_allowed_ip_list}
+    
+                                    <p class="title title-without-tabs">{intl d='atos.bo.default' l="Payment by N installment"}</p>
+    
+                                    {loop name="multi-plugin-enabled" type="module" code="AtosNx" active="1"}{/loop}
+                                    {elseloop rel="multi-plugin-enabled"}
+                                        <div class="alert alert-info">
+                                            {intl l="Install and activate Atos multiple times payment module (AtoxNx) to get configuration options." d='payzen.ai'}
+                                        </div>
+                                    {/elseloop}
+    
+                                    {render_form_field form=$form field="nx_nb_installments" value=$nx_nb_installments|default:3}
+                                    {render_form_field form=$form field="nx_minimum_amount" value=$nx_minimum_amount|default:0}
+                                    {render_form_field form=$form field="nx_maximum_amount" value=$nx_maximum_amount|default:0}
                                 </div>
 
                                 <div class="col-md-4">
