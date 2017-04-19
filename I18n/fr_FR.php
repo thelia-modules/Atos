@@ -8,7 +8,7 @@ return array(
     'Atos payment module is nort properly configured. Please check module configuration in your back-office.' => 'Le module de paiement Atos n\'est pas correctement configuré. Merci de vérifier la configuration dans votre back-office.',
     'Atos platform request processing terminated.' => 'Traitemenr de la requête ATOS terminé.',
     'Atos-SIPS platform request received.' => 'Réception d\'une requête ATOS',
-    'Cannot find an order for transaction ID "%trans"' => 'Aucune commande ne correspond à l\'ID de transaction "%trans"',
+    'Cannot find an order having reference "%rc"' => 'Aucune commande ne correspond au return_context "%rc"',
     'Cannot validate order. Response code is %resp' => 'La commande ne peut être validée. Le code de réponse est %resp',
     'Empty response recevied from Atos binary "%path". Please check path and permissions.' => 'Le binaire Atos %path a retourné une réponse vide. Vérifiez que ce fichier est exécutable.',
     'Error %code while processing response, with message %message' => 'Erreur %code lors du traitement de la réponse, avec le message %message',

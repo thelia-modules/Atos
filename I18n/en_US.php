@@ -8,7 +8,7 @@ return array(
     'Atos payment module is nort properly configured. Please check module configuration in your back-office.' => 'Atos payment module is nort properly configured. Please check module configuration in your back-office.',
     'Atos platform request processing terminated.' => 'Atos platform request processing terminated.',
     'Atos-SIPS platform request received.' => 'Atos-SIPS platform request received.',
-    'Cannot find an order for transaction ID "%trans"' => 'Cannot find an order for transaction ID "%trans"',
+    'Cannot find an order having reference "%rc"' => 'Cannot find an order having reference "%rc"',
     'Cannot validate order. Response code is %resp' => 'Cannot validate order. Response code is %resp',
     'Empty response recevied from Atos binary "%path". Please check path and permissions.' => 'Empty response recevied from Atos binary "%path". Please check path and permissions.',
     'Error %code while processing response, with message %message' => 'Error %code while processing response, with message %message',
