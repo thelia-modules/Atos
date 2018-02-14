@@ -7,7 +7,7 @@
     <descriptive locale="fr_FR">
         <title>Module de paiement Atos-SIPS</title>
     </descriptive>
-    <version>1.2.0</version>
+    <version>1.2.2</version>
     <author>
         <name>Manuel Raynaud, Franck Allimant</name>
         <email>manu@thelia.net, franck@cqfdev.fr</email>

@@ -79,12 +79,8 @@ class PaymentController extends BasePaymentModuleController
                         )
                     );
                 } elseif ($result['response_code'] == '00') {
-                    $atos = new Atos();
-
-                    $order = OrderQuery::create()
-                        ->filterByTransactionRef($result['transaction_id'])
-                        ->filterByPaymentModuleId($atos->getModuleModel()->getId())
-                        ->findOne();
+                    $orderRef = base64_decode($result['return_context']);
+                    $order = OrderQuery::create()->findOneByRef($orderRef);
 
                     if ($order) {
                         $this->confirmPayment($order->getId());
@@ -99,8 +95,8 @@ class PaymentController extends BasePaymentModuleController
                     } else {
                         $this->getLog()->addError(
                             $this->getTranslator()->trans(
-                                'Cannot find an order for transaction ID "%trans"',
-                                ['%trans' => $result['transaction_id']],
+                                'Cannot find an order having reference "%rc"',
+                                ['%rc' => $orderRef],
                                 Atos::MODULE_DOMAIN
                             )
                         );
