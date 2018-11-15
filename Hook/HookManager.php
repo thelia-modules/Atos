@@ -40,34 +40,44 @@ class HookManager extends BaseHook
     {
         $logFilePath = sprintf(THELIA_ROOT."log".DS."%s.log", Atos::MODULE_DOMAIN);
 
-        $traces = @file_get_contents($logFilePath);
+        if (false !== $fh = @fopen($logFilePath, "r")) {
+            if (filesize($logFilePath) > self::MAX_TRACE_SIZE_IN_BYTES) {
+                fseek($fh, -self::MAX_TRACE_SIZE_IN_BYTES, SEEK_END);
+                $truncated = true;
+            } else {
+                $truncated = false;
+            }
 
-        if (false === $traces) {
-            $traces = $this->translator->trans(
-                "The log file '%log' does not exists yet.",
-                [ '%log' => $logFilePath ],
-                Atos::MODULE_DOMAIN
+            $traces = implode(
+                '<br>',
+                array_reverse(
+                    explode(
+                        "\n",
+                        fread($fh, self::MAX_TRACE_SIZE_IN_BYTES)
+                    )
+                )
             );
-        } elseif (empty($traces)) {
-            $traces = $this->translator->trans("The log file is currently empty.", [], Atos::MODULE_DOMAIN);
-        } else {
-            // Limiter la taille des traces à 1MO
-            if (strlen($traces) > self::MAX_TRACE_SIZE_IN_BYTES) {
-                $traces = substr($traces, strlen($traces) - self::MAX_TRACE_SIZE_IN_BYTES);
-                // Cut a first line break;
-                if (false !== $lineBreakPos = strpos($traces, "\n")) {
-                    $traces = substr($traces, $lineBreakPos+1);
-                }
 
+            fclose($fh);
+
+            if (empty($traces)) {
+                $traces = $this->translator->trans("The log file is currently empty.", [], Atos::MODULE_DOMAIN);
+            } elseif ($truncated) {
                 $traces = $this->translator->trans(
-                    "(Previous log is in %file file.)\n",
-                    [ '%file' => sprintf("log".DS."%s.log", Atos::MODULE_DOMAIN) ],
+                    "(Previous log is in %file file.)<br>",
+                    ['%file' => sprintf("log" . DS . "%s.log", Atos::MODULE_DOMAIN)],
                     Atos::MODULE_DOMAIN
                 ) . $traces;
             }
+        } else {
+            $traces = $this->translator->trans(
+                "The log file '%log' does not exists yet.",
+                ['%log' => $logFilePath],
+                Atos::MODULE_DOMAIN
+            );
         }
 
-        $vars = [ 'trace_content' => nl2br($traces)  ];
+        $vars = [ 'trace_content' => $traces ];
 
         if (null !== $params = ModuleConfigQuery::create()->findByModuleId(Atos::getModuleId())) {
             /** @var ModuleConfig $param */
